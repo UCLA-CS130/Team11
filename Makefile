@@ -1,9 +1,11 @@
+# Makefile based of tutorial here:
+# http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
 OPTIMIZE=-O0
 CC = g++
 CFLAGS = $(OPTIMIZE) -g -Wall -std=c++0x
 PARSER = nginx-configparser
-DEPS = $(PARSER)/config_parser.h
-OBJ = $(PARSER)/config_parser.o main.o 
+DEPS = config_parser.h
+OBJ = config_parser.o main.o 
 TARGET = serve
 
 %.o: %.cc $(DEPS)
@@ -14,4 +16,3 @@ serve: $(OBJ)
 
 clean: 
 	rm -f $(TARGET) *.o 
-	rm -f $(PARSER)/*.o

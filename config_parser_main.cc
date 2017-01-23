@@ -1,3 +1,5 @@
+// Usage: ./config_parser <path to config file>
+
 #include "config_parser.h"
 
 int main(int argc, char* argv[]) {
