@@ -8,7 +8,7 @@ std::string Response::response_builder(std::string status, std::string content)
 {
   std::string response = "";
   response += status + crlf;
-  for (int i = 0; i < headers.size(); ++i)
+  for (unsigned int i = 0; i < headers.size(); ++i)
   {
     Header& h = headers[i];
     response += h.name;
