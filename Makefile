@@ -2,17 +2,13 @@
 # http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
 OPTIMIZE=-O0
 CC = g++
-CFLAGS = $(OPTIMIZE) -g -Wall -std=c++0x
-PARSER = nginx-configparser
-DEPS = config_parser.h
-OBJ = config_parser.o main.o 
+CFLAGS = $(OPTIMIZE) -std=c++0x -g -Wall
+LIBFLAGS = -lboost_system
+SRC = config_parser.cc serve_main.cc serve_server.cc serve_response.cc
 TARGET = serve
 
-%.o: %.cc $(DEPS)
-	$(CC) $(CFLAGS) -c -o $@ $<
-
-serve: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^
+$(TARGET): $(SRC)
+	$(CC) $(SRC) $(CFLAGS) $(LIBFLAGS) -o $(TARGET)
 
 clean: 
 	rm -f $(TARGET) *.o 
