@@ -6,14 +6,12 @@ class Server
 {
 public:
 
-  Server(boost::asio::io_service& io_service, int port);
+  Server(unsigned short port);
   ~Server();
 
 private:
+  boost::asio::io_service io_service_;
   tcp::acceptor acceptor_;
-  tcp::endpoint endpoint_;
-  tcp::socket socket_;
-
-  void handle_accept();
+  void serve();
     
 };

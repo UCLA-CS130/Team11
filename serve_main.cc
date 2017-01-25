@@ -1,15 +1,21 @@
-#include "config_parser.h"
-
+#include <cstdlib>
+#include <iostream>
+#include "serve_server.h"
 int main(int argc, char* argv[]) {
-  if (argc != 2) {
-    printf("Usage: ./config_parser <path to config file>\n");
-    return 1;
+  try
+  {
+    if (argc != 2)
+    {
+      std::cerr << "Usage: blocking_tcp_echo_server <port>\n";
+      return 1;
+    }
+
+    Server s(std::atoi(argv[1]));
+  }
+  catch (std::exception& e)
+  {
+    std::cerr << "Exception: " << e.what() << "\n";
   }
 
-  NginxConfigParser config_parser;
-  NginxConfig config;
-  config_parser.Parse(argv[1], &config);
-
-  printf("%s", config.ToString().c_str());
   return 0;
 }
