@@ -2,6 +2,8 @@
 #include <iostream>
 #include "serve_server.h"
 int main(int argc, char* argv[]) {
+
+  // TODO: Instead of manually entering port, utilize nginx config parser
   try
   {
     if (argc != 2)

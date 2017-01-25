@@ -18,6 +18,7 @@ Header make_header(std::string name, std::string value) {
 
 Server::Server(unsigned short port) : acceptor_(io_service_)
 {
+	// Setup for accepting connection, taken from Boost sample documentation
 	boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
   acceptor_.open(endpoint.protocol());
   acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
@@ -27,7 +28,7 @@ Server::Server(unsigned short port) : acceptor_(io_service_)
 }
 
 Server::~Server() {
-
+	// TODO: Setup deconstructor
 }
 
 void Server::serve(){
@@ -47,21 +48,16 @@ void Server::serve(){
       else if (err)
         throw boost::system::system_error(err); 
 
-			// [3] Perform write:
+			// [3] Perform write: Creates a response object that builds the request response
       Response resp;
-      resp.headers.push_back(make_header("HTTP/1.1 200 OK\r\n","")); 
       resp.headers.push_back(make_header("Content-Type","text/plain")); 
-      std::string resp_headers = resp.header_builder();
-            
-      std::size_t resp_len = length + resp_headers.size();
+      std::string body(req_buffer);
+      std::string resp_headers = resp.response_builder("HTTP/1.1 200 OK", body);
+      std::size_t resp_len = resp_headers.size();
+
+      // Copy over response string to char array
       char data[resp_len];
-
-      resp_headers.copy(data, resp_headers.size());
-      std::memcpy(&data[resp_headers.size()], req_buffer, length);
-
-      data[resp_len] = '\0';
-
-      std::cout << "this is the buffer: " << data << std::endl;
+      resp_headers.copy(data, resp_len);
 
 			boost::asio::write(socket, boost::asio::buffer(data, resp_len));
 		}
