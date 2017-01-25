@@ -3,16 +3,12 @@
 OPTIMIZE=-O0
 CC = g++
 CFLAGS = $(OPTIMIZE) -std=c++0x -g -Wall
-LIBFLAGS = -lpthread -lboost_system
-DEPS = config_parser.h serve_server.h server_response.h
-OBJ = config_parser.o serve_main.o serve_server.o serve_response.o
+LIBFLAGS = -lboost_system
+SRC = config_parser.cc serve_main.cc serve_server.cc serve_response.cc
 TARGET = serve
 
-%.o: %.cc $(DEPS)
-	$(CC) $(CFLAGS) -c -o $@ $< 
-
-$(TARGET): $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $^ $(LIBFLAGS)
+$(TARGET): $(SRC)
+	$(CC) $(SRC) $(CFLAGS) $(LIBFLAGS) -o $(TARGET)
 
 clean: 
 	rm -f $(TARGET) *.o 
