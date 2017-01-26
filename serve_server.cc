@@ -42,11 +42,14 @@ void Server::serve(){
 			// [2] Perform read:
 			char req_buffer[MAX_LENGTH];
 			boost::system::error_code err;
-			size_t length = socket.read_some(boost::asio::buffer(req_buffer), err);
+			socket.read_some(boost::asio::buffer(req_buffer), err);
 			if (err == boost::asio::error::eof)
         break; 
       else if (err)
         throw boost::system::system_error(err); 
+
+      std::cout << "// REQUEST RECEIVED // " << std::endl;
+     	std::cout << req_buffer << std:: endl; 
 
 			// [3] Perform write: Creates a response object that builds the request response
       Response resp;
@@ -58,6 +61,9 @@ void Server::serve(){
       // Copy over response string to char array
       char data[resp_len];
       resp_headers.copy(data, resp_len);
+
+      std::cout << "// RESPONSE SENT //" << std::endl;
+      std::cout << data << std::endl;
 
 			boost::asio::write(socket, boost::asio::buffer(data, resp_len));
 		}
