@@ -1,9 +1,9 @@
 #include <cstdlib>
 #include <iostream>
 #include "serve_server.h"
+#include "config_parser.h"
 int main(int argc, char* argv[]) {
 
-  // TODO: Instead of manually entering port, utilize nginx config parser
   try
   {
     if (argc != 2)
@@ -12,7 +12,13 @@ int main(int argc, char* argv[]) {
       return 1;
     }
 
-    Server s(std::atoi(argv[1]));
+    NginxConfig config;
+    NginxConfigParser parser;
+    parser.Parse(argv[1], &config);
+
+    std::string p = config.statements_[1]->child_block_->statements_[0]->tokens_[1];
+
+    Server s((short)std::stoi(p));
   }
   catch (std::exception& e)
   {
