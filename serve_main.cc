@@ -16,8 +16,8 @@ int main(int argc, char* argv[]) {
     NginxConfigParser parser;
     parser.Parse(argv[1], &config);
 
-    std::string p = config.statements_[1]->child_block_->statements_[0]->tokens_[1];
-
+    std::string p = config.statements_[0]->tokens_[1];
+    std::cout << p << std::endl;
     Server s((short)std::stoi(p));
   }
   catch (std::exception& e)
