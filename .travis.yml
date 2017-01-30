@@ -2,6 +2,7 @@ language: cpp
 dist: trusty
 sudo: required
 before_install:
+  - sudo apt-get update
   - sudo apt-get install python-pip3
   - pip3 install requests
   - sudo apt-get install libboost-all-dev
