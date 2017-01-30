@@ -1,0 +1,8 @@
+language: cpp
+script: make
+dist: trusty
+sudo: false
+addons:
+apt:
+  packages:
+    - libboost-all-dev
