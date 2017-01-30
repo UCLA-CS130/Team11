@@ -14,4 +14,4 @@ clean:
 	rm -f $(TARGET) *.o 
 
 test:
-	python3 integration_test.py
+	python integration_test.py
