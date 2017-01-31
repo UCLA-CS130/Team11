@@ -3,6 +3,6 @@ dist: trusty
 sudo: required
 before_install:
   - sudo apt-get update
-  - sudo pip install requests
+  - sudo pip install --user requests
   - sudo apt-get install libboost-all-dev
 script: make test
