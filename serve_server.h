@@ -8,7 +8,7 @@ using boost::asio::ip::tcp;
 class Server
 {
 public:
-	
+  
   Server(unsigned short port);
   ~Server();
 
@@ -20,3 +20,4 @@ private:
 };
 
 #endif
+

@@ -20,3 +20,4 @@ std::string Response::response_builder(std::string status, std::string content)
   response += content;
   return response;
 }
+
