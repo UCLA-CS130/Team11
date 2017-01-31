@@ -11,7 +11,7 @@ if subprocess.call(["sudo","make"]) != 0:
   sys.exit(1)
 
 print 'Running webserver...'
-serv = subprocess.Popen(["./serve", "demo_config"], stdout=DEVNULL)
+serv = subprocess.Popen(["./serve", "demo_config"])
 
 print 'Sending request to webserver...'
 # Fix due to proxy issues
@@ -39,8 +39,11 @@ if r.headers['content-type'] != "text/plain":
   sys.exit(1) 
 
 # Check response
-expected_resp = 'GET / HTTP/1.1\r\nHost: localhost:9999\r\nAccept-Encoding: gzip, deflate, compress\r\nAccept: */*\r\nUser-Agent: python-requests/2.2.1 CPython/2.7.6 Linux/4.2.0-27-generic\r\n\r\n'
-if r.text != expected_resp:
+# We are checking using a substring as the user-agent differs between our vm and travis' vm
+expected_resp = 'GET / HTTP/1.1\r\nHost: localhost:9999\r\nAccept-Encoding: gzip, deflate, compress\r\nAccept: */*\r\n'
+if expected_resp in r.text:
+  print 'Expected response received!'
+else:  
   print 'ERROR: Incorrect response'
   sys.exit(1) 
 
