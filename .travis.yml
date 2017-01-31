@@ -3,7 +3,7 @@ dist: trusty
 sudo: required
 before_install:
   - sudo apt-get update
-  - sudo pip install --user requests
+  - sudo pip install requests
   - sudo apt-get install libboost-all-dev
   # Fix for python failing to import module
   # Pulled from here: https://github.com/travis-ci/travis-ci/issues/5679
