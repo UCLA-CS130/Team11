@@ -10,8 +10,6 @@ TARGET= serve
 TEST=config_parser_test
 TEST_SRC= config_parser.cc
 
-TEST2 = serve_server_test
-TEST_SRC2 = serve_server.cc
 
 $(TARGET): $(SRC)
 	$(CC) $(SRC) $(CFLAGS) $(LIBFLAGS) -o $(TARGET)
@@ -22,13 +20,11 @@ config_parser_test:
 	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include $(TEST).cc $(TEST_SRC) ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o $(TEST)
 
 serve_server_test:
-	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -c ${GTEST_DIR}/src/gtest-all.cc
-	ar -rv libgtest.a gtest-all.o
-	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include $(TEST2).cc $(TEST_SRC2) ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o $(TEST2)
+	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_server_test.cc $(SRC) ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_server_test
 
 
-test: $(TEST2)
-	./$(TEST2)
+test: config_parser_test serve_server_test
+	./serve_server_test
 
 clean: 
-	rm -f $(TARGET) *.o 
+	rm -f $(TARGET) *.o serve_server_test config_parser_test
