@@ -3,7 +3,7 @@
 OPTIMIZE=-O0
 CC = g++
 CFLAGS = $(OPTIMIZE) -std=c++0x -g -Wall
-TCFLAGS = -fprofile-arcs -ftest-coverage
+TCFLAGS = --coverage
 LIBFLAGS = -lboost_system
 SRC = config_parser.cc serve_main.cc serve_server.cc serve_response.cc
 TARGET = serve
