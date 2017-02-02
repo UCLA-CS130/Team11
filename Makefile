@@ -12,7 +12,7 @@ $(TARGET): $(SRC)
 	$(CC) $(SRC) $(CFLAGS) $(TCFLAGS) $(LIBFLAGS) -o $(TARGET) 
 
 clean: 
-	rm -f $(TARGET) *.o 
+	rm -f $(TARGET) *.o *.gcno
 
 test:
 	python integration_test.py
