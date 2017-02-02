@@ -3,17 +3,16 @@
 #include "gtest/gtest.h"
 #include "config_parser.h"
 #include "serve_server.h"
+#include "serve_response.h"
 
 
-/*
-TEST(configParseTest, correctConfig)
+TEST(HeaderTest, ValidHeader)
 {
-  configArguments configArgs;
-  const char* argv[2] = {"./serve", "demo_config"};
-  int errorCode = Server::parseConfig(2, argv, configArgs);
-  EXPECT_EQ(errorCode, 0);
-  EXPECT_EQ(configArgs.port, 1111);
-
+   
+  //Server s((short)1111);
+  Header h = make_header("stephen", "0");
+   ASSERT_TRUE(h.name == "stephen");
+			   
 }
-*/
+
 

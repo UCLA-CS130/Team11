@@ -9,12 +9,7 @@ using boost::asio::ip::tcp;
 
 const int MAX_LENGTH = 1024;
 
-Header make_header(std::string name, std::string value) {
-  Header h; 
-  h.name = name; 
-  h.value = value;
-  return h;
-}
+
 
 Server::Server(unsigned short port) : acceptor_(io_service_)
 {
@@ -25,6 +20,13 @@ Server::Server(unsigned short port) : acceptor_(io_service_)
   acceptor_.bind(endpoint);
   acceptor_.listen();
   serve();
+}
+
+Header make_header(std::string name, std::string value) {
+  Header h; 
+  h.name = name; 
+  h.value = value;
+  return h;
 }
 
 Server::~Server() {
