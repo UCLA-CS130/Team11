@@ -27,4 +27,12 @@ test: config_parser_test serve_server_test
 	./serve_server_test
 
 clean: 
+<<<<<<< HEAD
 	rm -f $(TARGET) *.o serve_server_test config_parser_test
+=======
+	rm -f $(TARGET) *.o 
+
+test:
+	python integration_test.py
+
+>>>>>>> master
