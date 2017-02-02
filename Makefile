@@ -20,7 +20,7 @@ config_parser_test:
 	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include $(TEST).cc $(TEST_SRC) ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o $(TEST)
 
 serve_server_test:
-	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_server_test.cc $(SRC) ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_server_test
+	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_server_test.cc serve_server.cc serve_response.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_server_test
 
 
 test: config_parser_test serve_server_test

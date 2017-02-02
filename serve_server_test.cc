@@ -5,7 +5,7 @@
 #include "serve_server.h"
 
 
-
+/*
 TEST(configParseTest, correctConfig)
 {
   configArguments configArgs;
@@ -15,5 +15,5 @@ TEST(configParseTest, correctConfig)
   EXPECT_EQ(configArgs.port, 1111);
 
 }
-
+*/
 
