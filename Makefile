@@ -12,3 +12,7 @@ $(TARGET): $(SRC)
 
 clean: 
 	rm -f $(TARGET) *.o 
+
+test:
+	python integration_test.py
+
