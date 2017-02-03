@@ -87,6 +87,10 @@ TEST_F(NginxStringConfigTest, InvalidSimpleStatement) {
     ASSERT_FALSE(ParseString("foo bar")); 
 }
 
+TEST_F(NginxStringConfigTest, Invalid) {
+    ASSERT_FALSE(ParseString("foo braj")); 
+}
+
 TEST_F(NginxStringConfigTest, InvalidStatementMultipleSemiColon) {
     ASSERT_FALSE(ParseString("foo bar;;")); 
 }
