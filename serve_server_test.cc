@@ -7,13 +7,10 @@
 
 
 TEST(HeaderTest, ValidHeader)
-{
-   
-  //Server s((short)1111);
+{ 
   Header h = make_header("stephen", "0");
-   ASSERT_TRUE(h.name == "stephen");
-   ASSERT_TRUE(h.value == "0");
-			   
+  ASSERT_TRUE(h.name == "stephen");
+  ASSERT_TRUE(h.value == "0");		   
 }
 
 
