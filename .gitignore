@@ -5,9 +5,7 @@ serve
 *.a
 config_parser_test
 config_parser
-<<<<<<< HEAD
 *.gcno
-=======
 serve_server_test
+serve_response_test
 #Makefile#
->>>>>>> 65c6c176c238efaaeab5ea512bbd03138ac40c02
