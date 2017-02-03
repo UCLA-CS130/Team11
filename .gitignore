@@ -6,4 +6,5 @@ serve
 config_parser_test
 config_parser
 serve_server_test
+serve_response_test
 #Makefile#
