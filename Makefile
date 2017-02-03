@@ -29,6 +29,7 @@ serve_response_test:
 
 test: config_parser_test serve_server_test serve_response_test
 	./serve_response_test
+	./serve_server_test
 	python integration_test.py
 
 clean: 
