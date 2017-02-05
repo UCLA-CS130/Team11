@@ -2,6 +2,7 @@
 #define PARSED_REQUEST_H
 
 #include <string>
+#include <iostream>
 /**
  * Container for response sent to server
  */

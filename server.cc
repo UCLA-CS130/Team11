@@ -104,7 +104,7 @@ void Server::listen(){
       // [2] Perform read:
       char req_buffer[MAX_LENGTH];
       boost::system::error_code err;
-      socket.read_some(boost::asio::buffer(req_buffer), err);
+      size_t num_bytes = socket.read_some(boost::asio::buffer(req_buffer), err);
       if (err == boost::asio::error::eof)
         break; 
       else if (err)
@@ -118,13 +118,6 @@ void Server::listen(){
 
       // DEBUGGING: 
       parsed_req.print_contents();
-
-      // [3] Perform write: Creates a response object that builds the request response
-      Response resp;
-      resp.headers.push_back(make_header("Content-Type","text/plain")); 
-      std::string body(req_buffer);
-      std::string resp_headers = resp.response_builder("HTTP/1.1 200 OK", body);
-      std::size_t resp_len = resp_headers.size();
 
       // [3] Perform write: Creates a response object that builds the request response
       Response resp;
