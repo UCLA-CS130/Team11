@@ -1,9 +1,13 @@
 #include <boost/asio.hpp>
+#include <boost/algorithm/string.hpp>
 #include <iostream>
 #include <string>
+#include <vector>
+#include <regex>
 #include "server.h"
 #include "serve_response.h"
 #include "config_parser.h"
+#include "parsed_request.h"
 
 
 
@@ -45,6 +49,50 @@ Server::~Server() {
   // TODO: Setup deconstructor
 }
 
+bool Server::parse_request(char* req_buffer, ParsedRequest* parsed_req) {
+  
+  // Extract request into lines: 
+  std::string request(req_buffer); 
+  std::vector<std::string> lines;
+  boost::split(lines,request,boost::is_any_of("\r\n"));
+
+  // Extract request line: 
+  std::vector<std::string> reqs; 
+  boost::split(reqs,lines[0],boost::is_any_of(" "));
+
+  if (reqs.size() != 3) {
+    std::cerr << "Malformed request." << std::endl;
+    return false;
+  }
+
+  parsed_req->method = reqs[0];
+  parsed_req->URI = reqs[1];
+  parsed_req->HTTP = reqs[2];
+
+  // Extract file and path:
+  std::vector<std::string> paths; 
+  boost::split(paths,parsed_req->URI,boost::is_any_of("/"));
+  // Ignore paths[0] as empty string is tokenized
+  int paths_size = paths.size() - 1; 
+  switch(paths_size) {
+    case 0:
+      std::cerr << "No resource requested" << std::endl;
+      // TODO: Set error status
+      break;
+    case 1:
+      parsed_req->path = paths[1];
+      break;
+    case 2:
+      parsed_req->path = paths[1];
+      parsed_req->file = paths[2];
+      break;
+    default:
+      std::cerr << "Resource requested not valid" << std::endl;
+      // TODO: Set error status
+  }
+  return true; 
+}
+
 void Server::listen(){
 
   try {
@@ -62,8 +110,14 @@ void Server::listen(){
       else if (err)
         throw boost::system::system_error(err); 
 
-      std::cout << "// REQUEST RECEIVED // " << std::endl;
-      std::cout << req_buffer << std:: endl; 
+      ParsedRequest parsed_req(req_buffer); 
+      if (parse_request(req_buffer, &parsed_req) == false) {
+        std::cerr << "Unable to parse request." << std::endl;
+        continue;
+      }
+
+      // DEBUGGING: 
+      parsed_req.print_contents();
 
       // [3] Perform write: Creates a response object that builds the request response
       Response resp;
@@ -80,6 +134,7 @@ void Server::listen(){
       std::cout << data << std::endl;
 
       boost::asio::write(socket, boost::asio::buffer(data, resp_len));
+      
     }
   }
   catch (std::exception& e)

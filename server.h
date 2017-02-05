@@ -3,6 +3,7 @@
 
 #include <boost/asio.hpp>
 #include "serve_response.h"
+#include "parsed_request.h"
 
 using boost::asio::ip::tcp;
 
@@ -20,10 +21,10 @@ public:
 private:
   boost::asio::io_service io_service_;
   tcp::acceptor acceptor_;
-
-
-  void init_acceptor(); 
   unsigned short port; 
+
+  void init_acceptor();
+  bool parse_request(char* req_buffer, ParsedRequest* parsed_req); 
  
     
 };

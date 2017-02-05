@@ -2,9 +2,9 @@
 # http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
 OPTIMIZE=-O0
 CC = g++
-CFLAGS = $(OPTIMIZE) -std=c++0x -g -Wall
+CFLAGS = $(OPTIMIZE) -std=c++11 -g -Wall
 TCFLAGS = -g -fprofile-arcs -ftest-coverage
-LIBFLAGS = -lboost_system -lpthread
+LIBFLAGS = -lboost_system -lpthread 
 SRC = config_parser.cc serve_main.cc server.cc serve_response.cc
 GTEST_DIR=googletest/googletest
 TARGET= serve
@@ -35,5 +35,6 @@ test: config_parser_test serve_server_test serve_response_test
 
 clean: 
 	rm -f $(TARGET) *.o serve_server_test config_parser_test serve_response_test *.gcno *.gcda
+	lsof -P | grep ':9999' | awk '{print $2}' | xargs kill -9
 
 
