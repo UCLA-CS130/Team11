@@ -3,11 +3,11 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <regex>
 #include "server.h"
 #include "serve_response.h"
 #include "config_parser.h"
 #include "parsed_request.h"
+#include "request_handler.h"
 
 
 
@@ -121,6 +121,22 @@ void Server::listen(){
 
       // DEBUGGING: 
       parsed_req.print_contents();
+
+      // TESTING REQUEST HANDLER: 
+      std::map<std::string, std::string> uri_map; 
+      uri_map["static1"] = "/foo/bar";
+      uri_map["static2"] = "/bar/foo";
+      EchoRequestHandler echo_request(&parsed_req, uri_map); 
+      StaticRequestHandler static_request(&parsed_req, uri_map); 
+
+      echo_request.write_headers(socket);
+      static_request.write_headers(socket);
+
+      echo_request.write_body(socket);
+      static_request.write_body(socket);
+
+      echo_request.handle_request();
+      static_request.handle_request();
 
       // [3] Perform write: Creates a response object that builds the request response
       Response resp;
