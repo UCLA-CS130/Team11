@@ -16,7 +16,7 @@ struct Response {
   std::string name_value_separator = ": ";
   std::string crlf = "\r\n";
   std::vector<Header> headers;
-  std::string response_builder(std::string status, std::string content);
+  std::string response_builder(std::string status);
 
 };
 

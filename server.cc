@@ -126,14 +126,16 @@ void Server::listen(){
       std::string resp_headers = resp.response_builder("HTTP/1.1 200 OK", body);
       std::size_t resp_len = resp_headers.size();
 
-      // Copy over response string to char array
-      char data[resp_len];
-      resp_headers.copy(data, resp_len);
+      // [3] Perform write: Creates a response object that builds the request response
+      Response resp;
+      resp.headers.push_back(make_header("Content-Type","text/plain")); 
+      std::string header = resp.response_builder("HTTP/1.1 200 OK");
 
       std::cout << "// RESPONSE SENT //" << std::endl;
-      std::cout << data << std::endl;
 
-      boost::asio::write(socket, boost::asio::buffer(data, resp_len));
+      boost::asio::write(socket, boost::asio::buffer(header, header.size()));
+
+      boost::asio::write(socket, boost::asio::buffer(req_buffer, num_bytes));
       
     }
   }

@@ -12,13 +12,13 @@
 TEST(ResponseTest, FirstResponse)
 {
   Response r;
-  std::string s = r.response_builder("Not Valid", "FirstResponse");
+  std::string s = r.response_builder("Not Valid");
   ASSERT_FALSE(s == "http");
 }
 
 TEST(ResponserTest, SecondResponse)
 {
   Response r;
-  std::string s = r.response_builder("Not Valid", "FirstResponse");
-  ASSERT_TRUE(s == "Not Valid\r\n\r\nFirstResponse");
+  std::string s = r.response_builder("Not Valid");
+  ASSERT_TRUE(s == "Not Valid\r\n\r\n");
 }
