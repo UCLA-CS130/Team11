@@ -5,9 +5,9 @@
 #include <vector>
 #include "server.h"
 #include "serve_response.h"
-#include "config_parser.h"
 #include "parsed_request.h"
 #include "request_handler.h"
+#include "path_map.h"
 
 
 
@@ -25,13 +25,17 @@ void Server::init_acceptor() {
 }
 
 bool Server::init(const char* config_file) {
+  /*
   NginxConfig config;
   NginxConfigParser parser;
   if (parser.Parse(config_file, &config) == false) {
     return false; 
   }
   std::string p = config.statements_[0]->tokens_[1];
-  port = (short)stoi(p); 
+  */
+  PathMap p;
+  p.URIPathMap(config_file);
+  port = (short)stoi(p.portNum); 
   init_acceptor(); 
   return true; 
 }
