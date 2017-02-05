@@ -12,15 +12,18 @@ class Server
 {
 public:
   
-  Server(unsigned short port);
+  Server();
   void listen();
+  bool init(const char* config_file);
   ~Server();
 
 private:
   boost::asio::io_service io_service_;
   tcp::acceptor acceptor_;
 
-  void init_acceptor(unsigned short port); 
+
+  void init_acceptor(); 
+  unsigned short port; 
  
     
 };

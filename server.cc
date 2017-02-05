@@ -3,13 +3,15 @@
 #include <string>
 #include "server.h"
 #include "serve_response.h"
+#include "config_parser.h"
+
 
 
 using boost::asio::ip::tcp;
 
 const int MAX_LENGTH = 1024;
 
-void Server::init_acceptor(unsigned short port) {
+void Server::init_acceptor() {
   // Setup for accepting connection, taken from Boost sample documentation
   boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
   acceptor_.open(endpoint.protocol());
@@ -18,10 +20,19 @@ void Server::init_acceptor(unsigned short port) {
   acceptor_.listen();
 }
 
-Server::Server(unsigned short port) : acceptor_(io_service_)
-{
-  init_acceptor(port); 
+bool Server::init(const char* config_file) {
+  NginxConfig config;
+  NginxConfigParser parser;
+  if (parser.Parse(config_file, &config) == false) {
+    return false; 
+  }
+  std::string p = config.statements_[0]->tokens_[1];
+  port = (short)stoi(p); 
+  init_acceptor(); 
+  return true; 
 }
+
+Server::Server() : acceptor_(io_service_) {}
 
 Header make_header(std::string name, std::string value) {
   Header h; 
