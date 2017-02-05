@@ -9,17 +9,18 @@ using boost::asio::ip::tcp;
 
 const int MAX_LENGTH = 1024;
 
-
-
-Server::Server(unsigned short port) : acceptor_(io_service_)
-{
+void Server::init_acceptor(unsigned short port) {
   // Setup for accepting connection, taken from Boost sample documentation
   boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
   acceptor_.open(endpoint.protocol());
   acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
   acceptor_.bind(endpoint);
   acceptor_.listen();
-  serve();
+}
+
+Server::Server(unsigned short port) : acceptor_(io_service_)
+{
+  init_acceptor(port); 
 }
 
 Header make_header(std::string name, std::string value) {
@@ -33,7 +34,7 @@ Server::~Server() {
   // TODO: Setup deconstructor
 }
 
-void Server::serve(){
+void Server::listen(){
 
   try {
     while(true) {

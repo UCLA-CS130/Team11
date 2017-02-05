@@ -18,6 +18,7 @@ int main(int argc, char* argv[]) {
 
     std::string p = config.statements_[0]->tokens_[1];
     Server s((short)std::stoi(p));
+    s.listen();
   }
   catch (std::exception& e)
   {
