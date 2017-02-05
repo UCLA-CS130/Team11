@@ -90,6 +90,9 @@ bool Server::parse_request(char* req_buffer, ParsedRequest* parsed_req) {
       std::cerr << "Resource requested not valid" << std::endl;
       // TODO: Set error status
   }
+
+  // [TODO] Extract mime_type: 
+  
   return true; 
 }
 
