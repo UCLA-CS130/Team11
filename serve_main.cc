@@ -1,6 +1,6 @@
 #include <cstdlib>
 #include <iostream>
-#include "serve_server.h"
+#include "server.h"
 #include "config_parser.h"
 int main(int argc, char* argv[]) {
 

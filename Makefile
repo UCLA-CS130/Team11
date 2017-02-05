@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = $(OPTIMIZE) -std=c++0x -g -Wall
 TCFLAGS = -g -fprofile-arcs -ftest-coverage
 LIBFLAGS = -lboost_system -lpthread
-SRC = config_parser.cc serve_main.cc serve_server.cc serve_response.cc
+SRC = config_parser.cc serve_main.cc server.cc serve_response.cc
 GTEST_DIR=googletest/googletest
 TARGET= serve
 TEST=config_parser_test
