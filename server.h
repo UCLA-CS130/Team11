@@ -14,7 +14,6 @@ Header make_header(std::string name, std::string value);
 class Server
 {
 public:
-  
   Server();
   ~Server();
   void listen();

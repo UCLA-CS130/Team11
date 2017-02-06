@@ -1,4 +1,6 @@
 #include <boost/asio.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <iostream>
 #include <string>
 
@@ -7,8 +9,6 @@
 #include "http_constants.h"
 
 using boost::asio::ip::tcp;
-
-// DEFINE HTTP HEADERS:
 
 /* REQUEST HANDLER */
 RequestHandler::~RequestHandler() {
@@ -82,6 +82,42 @@ StaticRequestHandler::~StaticRequestHandler() {
 
 bool StaticRequestHandler::handle_request() {
   std::cout << "Static request - handle request" << std::endl;
+  std::string file_path = "";
+  // Append mapped file path based on URI
+  auto it = uri_path_map.find(req->path);
+  if (it != uri_path_map.end()) {
+    // What if file path already has '/': ie /foo/bar/?
+    file_path = it->second + "/" + req->file; 
+  }
+  else {
+    file_path = req->file; 
+  }
+
+  // DEBUG: 
+  std::cout << "File path to be opened: " << file_path << std::endl;
+
+  // Verify if file exists, set status
+  boost::filesystem::path p(file_path);
+  if (boost::filesystem::exists(p)) {
+    if (boost::filesystem::is_directory(p)) {
+      std::cerr << p << " is a directory." << std::endl;
+      resp->status = BAD_REQUEST; 
+    }
+
+    // The file exists, attempt to open file
+    std::cout << "Opening file: " << p << std::endl;
+    boost::filesystem::ifstream file_stream(p); 
+
+    if(file_stream.is_open()) {
+      std::cout << "File is opened!" << std::endl;
+    }
+    
+    resp->status = OK; 
+  }
+  else {
+    std::cerr << "File does not exist, sending 404 response" << std::endl;
+    resp->status = NOT_FOUND;
+  }
   return true;
 }
 

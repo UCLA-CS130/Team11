@@ -51,7 +51,7 @@ bool ServerConfig::parse_config(const char* arg)
 
         else
         {
-          std::cerr << "Incorrect configuration for URI: " << uri << std::endl;
+          std::cerr << "Incorrect format for location block " << uri << " " << path << std::endl;
         }
       } 
 

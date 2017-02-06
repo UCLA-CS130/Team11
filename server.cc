@@ -136,7 +136,7 @@ void Server::listen(){
         // Handle static files
         r = &static_request;
       }
-
+      
       r->handle_request();
       r->write_headers(socket); 
       r->write_body(socket);      
