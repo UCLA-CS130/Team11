@@ -4,6 +4,7 @@
 #include <boost/asio.hpp>
 #include "serve_response.h"
 #include "parsed_request.h"
+#include "server_config.h"
 
 using boost::asio::ip::tcp;
 
@@ -14,19 +15,18 @@ class Server
 public:
   
   Server();
+  ~Server();
   void listen();
   bool init(const char* config_file);
-  ~Server();
-
+  
 private:
   boost::asio::io_service io_service_;
   tcp::acceptor acceptor_;
-  unsigned short port; 
+  ServerConfig* server_config; 
 
   void init_acceptor();
   bool parse_request(char* req_buffer, ParsedRequest* parsed_req); 
  
-    
 };
 
 #endif

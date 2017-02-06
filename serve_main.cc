@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <iostream>
 #include "server.h"
-#include "config_parser.h"
 int main(int argc, char* argv[]) {
 
   try

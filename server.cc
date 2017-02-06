@@ -7,7 +7,7 @@
 #include "serve_response.h"
 #include "parsed_request.h"
 #include "request_handler.h"
-#include "path_map.h"
+#include "server_config.h"
 
 
 
@@ -17,7 +17,7 @@ const int MAX_LENGTH = 1024;
 
 void Server::init_acceptor() {
   // Setup for accepting connection, taken from Boost sample documentation
-  boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), port);
+  boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::tcp::v4(), server_config->port_num);
   acceptor_.open(endpoint.protocol());
   acceptor_.set_option(boost::asio::ip::tcp::acceptor::reuse_address(true));
   acceptor_.bind(endpoint);
@@ -25,22 +25,24 @@ void Server::init_acceptor() {
 }
 
 bool Server::init(const char* config_file) {
-  /*
-  NginxConfig config;
-  NginxConfigParser parser;
-  if (parser.Parse(config_file, &config) == false) {
-    return false; 
+  server_config = new ServerConfig();
+
+  if ( (server_config == nullptr) || (!server_config->parse_config(config_file)) ) {
+    std::cerr << "Error with server's configuration file" << std::endl;
+    return false;
   }
-  std::string p = config.statements_[0]->tokens_[1];
-  */
-  PathMap p;
-  p.URIPathMap(config_file);
-  port = (short)stoi(p.portNum); 
+
+  // DEBUGGING: 
+  std::cout << "Contents of uri_map: " << std::endl;
+  for (const auto &p : server_config->uri_map) {
+    std::cout << "uri_map[" << p.first << "] = " << p.second << '\n';
+  }
+
   init_acceptor(); 
   return true; 
 }
 
-Server::Server() : acceptor_(io_service_) {}
+Server::Server() : acceptor_(io_service_), server_config(nullptr) {}
 
 Header make_header(std::string name, std::string value) {
   Header h; 
@@ -50,7 +52,7 @@ Header make_header(std::string name, std::string value) {
 }
 
 Server::~Server() {
-  // TODO: Setup deconstructor
+ delete server_config;
 }
 
 bool Server::parse_request(char* req_buffer, ParsedRequest* parsed_req) {

@@ -1,1 +1,5 @@
 listen 9999;
+
+location /static1 {
+	root /example_dir;
+}
