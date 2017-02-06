@@ -19,7 +19,7 @@ session = requests.Session()
 session.trust_env = False
 
 try:
-  r = session.get("http://localhost:9999")
+  r = session.get("http://localhost:9999/echo")
 except requests.exceptions.RequestException:
   serv.kill(); 
   print 'Connection refused'
@@ -40,11 +40,12 @@ if r.headers['content-type'] != "text/plain":
 
 # Check response
 # We are checking using a substring as the user-agent differs between our vm and travis' vm
-expected_resp = 'GET / HTTP/1.1\r\nHost: localhost:9999\r\nAccept-Encoding: gzip, deflate, compress\r\nAccept: */*\r\n'
+expected_resp = 'GET /echo HTTP/1.1\r\nHost: localhost:9999'
 if expected_resp in r.text:
   print 'Expected response received!'
 else:  
-  print 'ERROR: Incorrect response'
+  print 'ERROR: Incorrect response: '
+  print r.text
   sys.exit(1) 
 
 print 'Terminating webserver...'
