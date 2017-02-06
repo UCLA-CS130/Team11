@@ -6,7 +6,7 @@ bool ServerConfig::parse_config(const char* arg)
 {
   NginxConfig config;
   NginxConfigParser parser;
-  std::string key, value, port, listen_token, location_token, uri;
+  std::string  port, listen_token, location_token, uri, path;
 
   if (!parser.Parse(arg, &config)) {
     std::cerr << "Unable to parse config file. Check formatting.\n"; 
@@ -38,7 +38,7 @@ bool ServerConfig::parse_config(const char* arg)
     else 
     {
       uri = config.statements_[i]->tokens_[1];
-      value = config.statements_[i]->child_block_->statements_[0]->tokens_[1];
+      path = config.statements_[i]->child_block_->statements_[0]->tokens_[1];
 
       location_token = config.statements_[i]->tokens_[0];
 
@@ -46,8 +46,7 @@ bool ServerConfig::parse_config(const char* arg)
       {
         if (uri[0] == '/')
         {
-          key = uri.substr(1);
-          uri_map[key] = value;
+          uri_map[uri] = path;
         }
 
         else

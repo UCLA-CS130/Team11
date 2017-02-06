@@ -41,12 +41,11 @@ bool Server::init(const char* config_file) {
     return false;
   }
 
-  // DEBUGGING
-  /* 
+  // DEBUGGING 
   std::cout << "Contents of uri_map: " << std::endl;
   for (const auto &p : server_config->uri_map) {
     std::cout << "uri_map[" << p.first << "] = " << p.second << '\n';
-  }*/
+  }
   build_map();
   init_acceptor(); 
   return true; 
@@ -129,7 +128,7 @@ void Server::listen(){
       parsed_req.print_contents();
 
       // TESTING REQUEST HANDLER: 
-      // TODO HANDLE REQUESTS
+      // TODO: HANDLE REQUESTS
       EchoRequestHandler echo_request(&parsed_req, server_config->uri_map); 
       StaticRequestHandler static_request(&parsed_req, server_config->uri_map); 
 
