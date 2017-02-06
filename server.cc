@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 #include "server.h"
-#include "serve_response.h"
 #include "server_containers.h"
 #include "request_handler.h"
 #include "server_config.h"
@@ -52,13 +51,6 @@ bool Server::init(const char* config_file) {
 }
 
 Server::Server() : acceptor_(io_service_), server_config(nullptr) {}
-
-Header make_header(std::string name, std::string value) {
-  Header h; 
-  h.name = name; 
-  h.value = value;
-  return h;
-}
 
 Server::~Server() {
  delete server_config;
@@ -127,8 +119,8 @@ void Server::listen(){
       // DEBUGGING: 
       parsed_req.print_contents();
 
-      // TESTING REQUEST HANDLER: 
-      // TODO: HANDLE REQUESTS
+      // TESTING REQUEST HANDLER:
+      /*
       EchoRequestHandler echo_request(&parsed_req, server_config->uri_map); 
       StaticRequestHandler static_request(&parsed_req, server_config->uri_map); 
 
@@ -140,8 +132,18 @@ void Server::listen(){
 
       echo_request.handle_request();
       static_request.handle_request();
+      */ 
+      
+      // TODO: HANDLE REQUESTS
+      Response resp; 
+      EchoRequestHandler echo_request(&parsed_req, server_config->uri_map, &resp); 
+      StaticRequestHandler static_request(&parsed_req, server_config->uri_map, &resp);
+
+      echo_request.handle_request();
+      echo_request.write_headers(socket); 
 
       // [3] Perform write: Creates a response object that builds the request response
+      /*
       Response resp;
       resp.headers.push_back(make_header("Content-Type","text/plain")); 
       std::string header = resp.response_builder("HTTP/1.1 200 OK");
@@ -151,6 +153,7 @@ void Server::listen(){
       boost::asio::write(socket, boost::asio::buffer(header, header.size()));
 
       boost::asio::write(socket, boost::asio::buffer(req_buffer, num_bytes));
+      */
       
     }
   }

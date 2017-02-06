@@ -4,7 +4,6 @@
 #include <boost/asio.hpp>
 #include <map>
 
-#include "serve_response.h"
 #include "server_containers.h"
 #include "server_config.h"
 

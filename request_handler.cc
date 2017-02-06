@@ -3,18 +3,36 @@
 #include <string>
 
 #include "request_handler.h"
-#include "server.h"
 #include "server_containers.h"
+#include "http_constants.h"
 
 using boost::asio::ip::tcp;
+
+// DEFINE HTTP HEADERS:
 
 /* REQUEST HANDLER */
 RequestHandler::~RequestHandler() {
   std::cout << "Deconstructing request handler" << std::endl;
 }
 
+std::string RequestHandler::build_headers() {
+  std::string response_header = "";
+  response_header += req->HTTP + " " + resp->status + crlf;
+  for (unsigned int i = 0; i < headers.size(); ++i)
+  {
+    Header& h = headers[i];
+    response_header += h.name_;
+    response_header += name_value_separator;
+    response_header += h.value_;
+    response_header += crlf;
+  }
+  response_header += crlf;
+  return response_header; 
+}
+
 bool RequestHandler::write_headers(tcp::socket& sock) {
-  std::cout << "attempting to write headers" << std::endl;
+  std::string header = build_headers();
+  boost::asio::write(sock, boost::asio::buffer(header, header.size()));
   return true;
 }
 
@@ -25,6 +43,10 @@ EchoRequestHandler::~EchoRequestHandler() {
 
 bool EchoRequestHandler::handle_request() {
   std::cout << "Echo request - handle request" << std::endl;
+  resp->status = OK;
+  headers.push_back(Header(CONTENT_TYPE, req->mime_type)); 
+  headers.push_back(Header(SERVER, resp->server)); 
+  // [TODO] Set date  
   return true;
 }
 

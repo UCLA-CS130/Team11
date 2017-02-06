@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = $(OPTIMIZE) -std=c++11 -g -Wall
 TCFLAGS = -g -fprofile-arcs -ftest-coverage
 LIBFLAGS =  -lboost_system -lboost_filesystem -lpthread
-SRC = config_parser.cc serve_main.cc server.cc serve_response.cc request_handler.cc server_config.cc
+SRC = config_parser.cc serve_main.cc server.cc request_handler.cc server_config.cc
 GTEST_DIR=googletest/googletest
 TARGET= serve
 TEST=config_parser_test
@@ -20,17 +20,17 @@ config_parser_test:
 	ar -rv libgtest.a gtest-all.o
 	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include $(TEST).cc $(TEST_SRC) ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o $(TEST)
 
-serve_server_test:
-	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_server_test.cc server.cc serve_response.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_server_test
+# Remake unit tests for Serve 2.0
+#serve_server_test:
+	#$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_server_test.cc server.cc serve_response.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_server_test
 
-serve_response_test:
-	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_response_test.cc server.cc serve_response.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_response_test
+#serve_response_test:
+	#$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_response_test.cc server.cc serve_response.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_response_test
 
 
 
-test: config_parser_test serve_server_test serve_response_test
-	./serve_response_test
-	./serve_server_test
+test: config_parser_test
+	./config_parser_test
 	python integration_test.py
 
 clean: 

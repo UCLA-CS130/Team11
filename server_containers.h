@@ -4,8 +4,9 @@
 #include <string>
 #include <iostream>
 
-class ParsedRequest {
-public:
+#include "http_constants.h"
+
+struct ParsedRequest {
   ParsedRequest(char* req_buffer) 
   : request(req_buffer), method(""), URI(""), HTTP(""), path(""), file(""), mime_type("") {}
   std::string request; 
@@ -27,5 +28,21 @@ public:
     std::cout << "mime_type: " << mime_type << std::endl;   
   } 
 };
+
+struct Header {
+  Header(std::string name, std::string value) : name_(name), value_(value) {}
+  std::string name_;
+  std::string value_;
+};
+
+
+struct Response {
+  // Initalize response to be at 500 Internal Server Error
+  Response() : status(INTERNAL_SERVER_ERROR), date(""), server("Serve 2.0") {}
+  std::string status; 
+  std::string date;
+  std::string server; 
+};
+
 
 #endif
