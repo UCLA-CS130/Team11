@@ -1,11 +1,9 @@
-#ifndef PARSED_REQUEST_H
-#define PARSED_REQUEST_H
+#ifndef SERVER_CONTAINERS_H
+#define SERVER_CONTAINERS_H
 
 #include <string>
 #include <iostream>
-/**
- * Container for response sent to server
- */
+
 class ParsedRequest {
 public:
   ParsedRequest(char* req_buffer) 
@@ -26,8 +24,8 @@ public:
     std::cout << "http: " << HTTP << std::endl;
     std::cout << "path: " << path << std::endl;
     std::cout << "file: " << file << std::endl;
-    std::cout << "mime_type: " << mime_type << std::endl;
-    
+    std::cout << "mime_type: " << mime_type << std::endl;   
   } 
 };
+
 #endif

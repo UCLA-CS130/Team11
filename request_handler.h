@@ -2,7 +2,7 @@
 #define REQUEST_HANDLER_H
 
 #include <boost/asio.hpp>
-#include "parsed_request.h"
+#include "server_containers.h"
 using boost::asio::ip::tcp;
 
 class RequestHandler {

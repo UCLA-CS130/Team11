@@ -5,11 +5,9 @@
 #include <vector>
 #include "server.h"
 #include "serve_response.h"
-#include "parsed_request.h"
+#include "server_containers.h"
 #include "request_handler.h"
 #include "server_config.h"
-
-
 
 using boost::asio::ip::tcp;
 
@@ -129,11 +127,8 @@ void Server::listen(){
       parsed_req.print_contents();
 
       // TESTING REQUEST HANDLER: 
-      std::map<std::string, std::string> uri_map; 
-      uri_map["static1"] = "/foo/bar";
-      uri_map["static2"] = "/bar/foo";
-      EchoRequestHandler echo_request(&parsed_req, uri_map); 
-      StaticRequestHandler static_request(&parsed_req, uri_map); 
+      EchoRequestHandler echo_request(&parsed_req, server_config->uri_map); 
+      StaticRequestHandler static_request(&parsed_req, server_config->uri_map); 
 
       echo_request.write_headers(socket);
       static_request.write_headers(socket);
