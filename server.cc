@@ -1,5 +1,8 @@
 #include <boost/asio.hpp>
 #include <boost/algorithm/string.hpp>
+
+#include <boost/filesystem.hpp>
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -22,6 +25,14 @@ void Server::init_acceptor() {
   acceptor_.listen();
 }
 
+void Server::build_map() { 
+  mime_map[".gif"] = "image/gif";
+  mime_map[".htm"] = "text/html";
+  mime_map[".html"] = "text/html";
+  mime_map[".jpg"] = "image/jpeg";
+  mime_map[".png"] = "image/png";
+}
+
 bool Server::init(const char* config_file) {
   server_config = new ServerConfig();
 
@@ -30,12 +41,13 @@ bool Server::init(const char* config_file) {
     return false;
   }
 
-  // DEBUGGING: 
+  // DEBUGGING
+  /* 
   std::cout << "Contents of uri_map: " << std::endl;
   for (const auto &p : server_config->uri_map) {
     std::cout << "uri_map[" << p.first << "] = " << p.second << '\n';
-  }
-
+  }*/
+  build_map();
   init_acceptor(); 
   return true; 
 }
@@ -51,6 +63,14 @@ Header make_header(std::string name, std::string value) {
 
 Server::~Server() {
  delete server_config;
+}
+
+std::string Server::extension_to_type(std::string ext) {
+  auto it = mime_map.find(ext); 
+  if (it != mime_map.end()) {
+    return it->second;
+  }
+  return "text/plain";
 }
 
 bool Server::parse_request(char* req_buffer, ParsedRequest* parsed_req) {
@@ -74,29 +94,11 @@ bool Server::parse_request(char* req_buffer, ParsedRequest* parsed_req) {
   parsed_req->HTTP = reqs[2];
 
   // Extract file and path:
-  std::vector<std::string> paths; 
-  boost::split(paths,parsed_req->URI,boost::is_any_of("/"));
-  // Ignore paths[0] as empty string is tokenized
-  int paths_size = paths.size() - 1; 
-  switch(paths_size) {
-    case 0:
-      std::cerr << "No resource requested" << std::endl;
-      // TODO: Set error status
-      break;
-    case 1:
-      parsed_req->path = paths[1];
-      break;
-    case 2:
-      parsed_req->path = paths[1];
-      parsed_req->file = paths[2];
-      break;
-    default:
-      std::cerr << "Resource requested not valid" << std::endl;
-      // TODO: Set error status
-  }
-
-  // [TODO] Extract mime_type: 
-  
+  boost::filesystem::path p(parsed_req->URI);
+  parsed_req->path = p.parent_path().string(); 
+  parsed_req->file = p.filename().string();
+  std::string ext = p.extension().string();
+  parsed_req->mime_type = extension_to_type(ext); 
   return true; 
 }
 
@@ -119,7 +121,7 @@ void Server::listen(){
 
       ParsedRequest parsed_req(req_buffer); 
       if (parse_request(req_buffer, &parsed_req) == false) {
-        std::cerr << "Unable to parse request." << std::endl;
+        std::cerr << "Unable to parse request:\n" << req_buffer << std::endl;
         continue;
       }
 
@@ -127,6 +129,7 @@ void Server::listen(){
       parsed_req.print_contents();
 
       // TESTING REQUEST HANDLER: 
+      // TODO HANDLE REQUESTS
       EchoRequestHandler echo_request(&parsed_req, server_config->uri_map); 
       StaticRequestHandler static_request(&parsed_req, server_config->uri_map); 
 
