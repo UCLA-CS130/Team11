@@ -44,15 +44,34 @@ EchoRequestHandler::~EchoRequestHandler() {
 bool EchoRequestHandler::handle_request() {
   std::cout << "Echo request - handle request" << std::endl;
   resp->status = OK;
-  headers.push_back(Header(CONTENT_TYPE, req->mime_type)); 
-  headers.push_back(Header(SERVER, resp->server)); 
-  // [TODO] Set date  
+   // [TODO] Set date 
+  headers.push_back(Header(SERVER, resp->server));
+
+  if (req->URI == ECHO_REQUEST) {
+    headers.push_back(Header(CONTENT_TYPE, req->mime_type));  
+  }
+  else if (req->URI == DEFAULT_REQUEST) {
+    headers.push_back(Header(CONTENT_TYPE, HTML));
+  }
+  else {
+    resp->status = BAD_REQUEST;
+    headers.push_back(Header(CONTENT_TYPE, HTML)); 
+  }
+   
   return true;
 }
 
 bool EchoRequestHandler::write_body(tcp::socket& sock) {
   std::cout << "Echo request - write body" << std::endl;
-  boost::asio::write(sock, boost::asio::buffer(req->request, req->request_size));
+  if (req->URI == ECHO_REQUEST) {
+    boost::asio::write(sock, boost::asio::buffer(req->request, req->request_size));
+  }
+  else if (req->URI == DEFAULT_REQUEST) {
+    boost::asio::write(sock, boost::asio::buffer(DEFAULT_RESPONSE, DEFAULT_RESPONSE.size()));
+  }
+  else {
+    boost::asio::write(sock, boost::asio::buffer(BAD_RESPONSE, BAD_RESPONSE.size()));
+  } 
   return true;
 }
 

@@ -10,10 +10,13 @@
 #include "server_containers.h"
 #include "request_handler.h"
 #include "server_config.h"
+#include "http_constants.h"
 
 using boost::asio::ip::tcp;
 
 const int MAX_LENGTH = 1024;
+// DEFAULT SERVER PATHS: 
+
 
 void Server::init_acceptor() {
   // Setup for accepting connection, taken from Boost sample documentation
@@ -25,11 +28,12 @@ void Server::init_acceptor() {
 }
 
 void Server::build_map() { 
-  mime_map[".gif"] = "image/gif";
-  mime_map[".htm"] = "text/html";
-  mime_map[".html"] = "text/html";
-  mime_map[".jpg"] = "image/jpeg";
-  mime_map[".png"] = "image/png";
+  mime_map[".gif"] = GIF;
+  mime_map[".htm"] = HTML;
+  mime_map[".html"] = HTML;
+  mime_map[".jpg"] = JPG;
+  mime_map[".jpeg"] = JPG;
+  mime_map[".png"] = PNG;
 }
 
 bool Server::init(const char* config_file) {
@@ -90,6 +94,7 @@ bool Server::parse_request(char* req_buffer, ParsedRequest* parsed_req) {
   parsed_req->file = p.filename().string();
   std::string ext = p.extension().string();
   parsed_req->mime_type = extension_to_type(ext); 
+
   return true; 
 }
 
@@ -119,43 +124,22 @@ void Server::listen(){
       // DEBUGGING: 
       parsed_req.print_contents();
 
-      // TESTING REQUEST HANDLER:
-      /*
-      EchoRequestHandler echo_request(&parsed_req, server_config->uri_map); 
-      StaticRequestHandler static_request(&parsed_req, server_config->uri_map); 
-
-      echo_request.write_headers(socket);
-      static_request.write_headers(socket);
-
-      echo_request.write_body(socket);
-      static_request.write_body(socket);
-
-      echo_request.handle_request();
-      static_request.handle_request();
-      */ 
-      
       // TODO: HANDLE REQUESTS
       Response resp; 
       EchoRequestHandler echo_request(&parsed_req, server_config->uri_map, &resp); 
       StaticRequestHandler static_request(&parsed_req, server_config->uri_map, &resp);
 
-      echo_request.handle_request();
-      echo_request.write_headers(socket); 
-      echo_request.write_body(socket);
+      // Default request handler:
+      RequestHandler* r = &echo_request;
 
-      // [3] Perform write: Creates a response object that builds the request response
-      /*
-      Response resp;
-      resp.headers.push_back(make_header("Content-Type","text/plain")); 
-      std::string header = resp.response_builder("HTTP/1.1 200 OK");
+      if (parsed_req.URI != ECHO_REQUEST && parsed_req.URI != DEFAULT_REQUEST) {
+        // Handle static files
+        r = &static_request;
+      }
 
-      std::cout << "// RESPONSE SENT //" << std::endl;
-
-      boost::asio::write(socket, boost::asio::buffer(header, header.size()));
-
-      boost::asio::write(socket, boost::asio::buffer(req_buffer, num_bytes));
-      */
-      
+      r->handle_request();
+      r->write_headers(socket); 
+      r->write_body(socket);      
     }
   }
   catch (std::exception& e)
