@@ -3,6 +3,8 @@
 
 #include <string>
 #include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
 
 #include "http_constants.h"
 
@@ -12,7 +14,7 @@ struct ParsedRequest {
   std::string request;
   size_t request_size;  
   std::string method; 
-  std::string URI; 
+  std::string URI;  
   std::string HTTP; 
   std::string path; 
   std::string file;
@@ -42,7 +44,8 @@ struct Response {
   Response() : status(INTERNAL_SERVER_ERROR), date(""), server("Serve 2.0") {}
   std::string status; 
   std::string date;
-  std::string server; 
+  std::string server;
+
 };
 
 

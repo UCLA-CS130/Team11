@@ -47,7 +47,7 @@ bool EchoRequestHandler::handle_request() {
    // [TODO] Set date 
   headers.push_back(Header(SERVER, resp->server));
 
-  if (req->URI == ECHO_REQUEST) {
+  if (req->URI == ECHO_REQUEST) { 
     headers.push_back(Header(CONTENT_TYPE, req->mime_type));  
   }
   else if (req->URI == DEFAULT_REQUEST) {
@@ -110,8 +110,9 @@ bool StaticRequestHandler::handle_request() {
 
     if(file_stream.is_open()) {
       std::cout << "File is opened!" << std::endl;
+      
     }
-    
+
     resp->status = OK; 
   }
   else {

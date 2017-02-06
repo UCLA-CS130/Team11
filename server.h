@@ -9,8 +9,6 @@
 
 using boost::asio::ip::tcp;
 
-Header make_header(std::string name, std::string value);
-
 class Server
 {
 public:
