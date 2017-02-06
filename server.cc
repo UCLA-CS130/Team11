@@ -110,7 +110,7 @@ void Server::listen(){
       else if (err)
         throw boost::system::system_error(err); 
 
-      ParsedRequest parsed_req(req_buffer); 
+      ParsedRequest parsed_req(req_buffer, num_bytes); 
       if (parse_request(req_buffer, &parsed_req) == false) {
         std::cerr << "Unable to parse request:\n" << req_buffer << std::endl;
         continue;
@@ -141,6 +141,7 @@ void Server::listen(){
 
       echo_request.handle_request();
       echo_request.write_headers(socket); 
+      echo_request.write_body(socket);
 
       // [3] Perform write: Creates a response object that builds the request response
       /*

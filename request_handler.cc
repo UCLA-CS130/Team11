@@ -52,6 +52,7 @@ bool EchoRequestHandler::handle_request() {
 
 bool EchoRequestHandler::write_body(tcp::socket& sock) {
   std::cout << "Echo request - write body" << std::endl;
+  boost::asio::write(sock, boost::asio::buffer(req->request, req->request_size));
   return true;
 }
 

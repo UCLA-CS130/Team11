@@ -7,9 +7,10 @@
 #include "http_constants.h"
 
 struct ParsedRequest {
-  ParsedRequest(char* req_buffer) 
-  : request(req_buffer), method(""), URI(""), HTTP(""), path(""), file(""), mime_type("") {}
-  std::string request; 
+  ParsedRequest(char* req_buffer, size_t req_size) 
+  : request(req_buffer), request_size(req_size), method(""), URI(""), HTTP(""), path(""), file(""), mime_type("") {}
+  std::string request;
+  size_t request_size;  
   std::string method; 
   std::string URI; 
   std::string HTTP; 
