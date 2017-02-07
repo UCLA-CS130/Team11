@@ -15,8 +15,12 @@
 using boost::asio::ip::tcp;
 
 const int MAX_LENGTH = 1024;
-// DEFAULT SERVER PATHS: 
 
+Server::Server() : acceptor_(io_service_), server_config(nullptr) {}
+
+Server::~Server() {
+ delete server_config;
+}
 
 void Server::init_acceptor() {
   // Setup for accepting connection, taken from Boost sample documentation
@@ -52,12 +56,6 @@ bool Server::init(const char* config_file) {
   build_map();
   init_acceptor(); 
   return true; 
-}
-
-Server::Server() : acceptor_(io_service_), server_config(nullptr) {}
-
-Server::~Server() {
- delete server_config;
 }
 
 std::string Server::extension_to_type(std::string ext) {
@@ -124,7 +122,7 @@ void Server::listen(){
       // DEBUGGING: 
       parsed_req.print_contents();
 
-      // TODO: HANDLE REQUESTS
+      // Handle Response:
       Response resp; 
       EchoRequestHandler echo_request(&parsed_req, server_config->uri_map, &resp); 
       StaticRequestHandler static_request(&parsed_req, server_config->uri_map, &resp);
@@ -136,10 +134,17 @@ void Server::listen(){
         // Handle static files
         r = &static_request;
       }
-      
-      r->handle_request();
-      r->write_headers(socket); 
-      r->write_body(socket);      
+      if(!r->handle_request()) {
+        std::cerr << "Request unsuccesful" << std::endl;
+      }
+      if(!r->write_headers(socket)) {
+        std::cerr << "Write failed" << std::endl;
+        continue;
+      }
+      if(!r->write_body(socket)) {
+        std::cerr << "Write failed" << std::endl;
+        continue;
+      }
     }
   }
   catch (std::exception& e)

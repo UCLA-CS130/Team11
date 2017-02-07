@@ -16,6 +16,11 @@ RequestHandler::~RequestHandler() {
   delete file_stream;
 }
 
+/**
+ * Builds the header based on the headers stored in the
+ * 'headers' variable
+ * @return The HTTP headers following the HTTP header format
+ */
 std::string RequestHandler::build_headers() {
   std::string response_header = "";
   response_header += req->HTTP + " " + resp->status + crlf;
@@ -31,6 +36,12 @@ std::string RequestHandler::build_headers() {
   return response_header; 
 }
 
+/**
+ * Writes the headers to the TCP socket
+ * @param  sock TCP socket
+ * @return      Returns true if write is successful 
+ *              Returns false if write fails
+ */
 bool RequestHandler::write_headers(tcp::socket& sock) {
   std::string header = build_headers();
   boost::asio::write(sock, boost::asio::buffer(header, header.size()));
@@ -42,8 +53,14 @@ EchoRequestHandler::~EchoRequestHandler() {
   std::cout << "Deconstructing echo request handler" << std::endl;
 }
 
+// [TODO] Catch write error
+/**
+ * Handles echo requests and the default request to our server
+ * Sets the appropriate headers for write_headers()
+ * @return Successful requests return true
+ *         Requests that fail return false
+ */
 bool EchoRequestHandler::handle_request() {
-  std::cout << "Echo request - handle request" << std::endl;
   resp->status = OK;
    // [TODO] Set date 
   headers.push_back(Header(SERVER, resp->server));
@@ -56,14 +73,20 @@ bool EchoRequestHandler::handle_request() {
   }
   else {
     resp->status = BAD_REQUEST;
-    headers.push_back(Header(CONTENT_TYPE, HTML)); 
+    headers.push_back(Header(CONTENT_TYPE, HTML));
+    return false; 
   }
-   
   return true;
 }
 
+// [TODO] Catch write error
+/**
+ * Writes the body of the response to the socket
+ * @param  sock TCP socket to write to
+ * @return      Returns true upon successful write
+ *              Returns false if write fails
+ */
 bool EchoRequestHandler::write_body(tcp::socket& sock) {
-  std::cout << "Echo request - write body" << std::endl;
   if (req->URI == ECHO_REQUEST) {
     boost::asio::write(sock, boost::asio::buffer(req->request, req->request_size));
   }
@@ -82,8 +105,14 @@ StaticRequestHandler::~StaticRequestHandler() {
 }
 
 // [TODO] Look into error handling: 
+/**
+ * Handles requests for opening files
+ * Verifies that file can successfully open and sets
+ * appropriate headers
+ * @return Return false for unsuccessful requests
+ *         Return true for successful requests
+ */
 bool StaticRequestHandler::handle_request() {
-  std::cout << "Static request - handle request" << std::endl;
   headers.push_back(Header(SERVER, resp->server));
 
   std::string file_path = "";
@@ -120,7 +149,6 @@ bool StaticRequestHandler::handle_request() {
     }
 
     if(file_stream->is_open()) {
-      std::cout << "File is opened!" << std::endl;
       headers.push_back(Header(CONTENT_TYPE, req->mime_type)); 
       resp->status = OK;
     }
@@ -141,11 +169,19 @@ bool StaticRequestHandler::handle_request() {
   return true;
 }
 
+// [TODO] Catch write error
+/**
+ * Writes the body of the response to the socket
+ * @param  sock TCP socket to write to
+ * @return      Returns true upon successful write
+ *              Returns false if write fails
+ */
 bool StaticRequestHandler::write_body(tcp::socket& sock) {
   std::cout << "static request - write body" << std::endl;
   char buffer[512];
   std::string body = "";
 
+  // Handle errors:
   if (resp->status == BAD_REQUEST) {
     boost::asio::write(sock, boost::asio::buffer(BAD_RESPONSE, BAD_RESPONSE.size()));
   }
@@ -163,7 +199,6 @@ bool StaticRequestHandler::write_body(tcp::socket& sock) {
 
     boost::asio::write(sock, boost::asio::buffer(body.c_str(), body.size()));
   }
-
   return true;
 }
 

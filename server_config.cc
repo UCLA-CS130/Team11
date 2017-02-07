@@ -2,6 +2,12 @@
 
 ServerConfig::ServerConfig() : port_num(-1) {}
 
+/**
+ * Parse config file for port number and static file paths
+ * @param  arg Config file
+ * @return     Returns true if config file is valid and parse is successful
+ *             Returns false if invalid config file
+ */
 bool ServerConfig::parse_config(const char* arg)
 {
   NginxConfig config;
