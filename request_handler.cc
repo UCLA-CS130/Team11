@@ -135,6 +135,7 @@ bool StaticRequestHandler::handle_request() {
   else {
     std::cerr << "File does not exist, sending 404 response" << std::endl;
     resp->status = NOT_FOUND;
+    headers.push_back(Header(CONTENT_TYPE, HTML));
     return false; 
   }
   return true;
@@ -161,8 +162,6 @@ bool StaticRequestHandler::write_body(tcp::socket& sock) {
     }
 
     boost::asio::write(sock, boost::asio::buffer(body.c_str(), body.size()));
-
-
   }
 
   return true;
