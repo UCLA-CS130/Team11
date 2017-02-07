@@ -21,15 +21,16 @@ config_parser_test:
 	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include $(TEST).cc $(TEST_SRC) ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o $(TEST)
 
 # Remake unit tests for Serve 2.0
-#serve_server_test:
-	#$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_server_test.cc server.cc serve_response.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_server_test
+server_test:
+	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include server_test.cc server.cc server_config.cc config_parser.cc request_handler.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o server_test
 
 #serve_response_test:
 	#$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_response_test.cc server.cc serve_response.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_response_test
 
-test: config_parser_test
-	./config_parser_test
-	python integration_test.py
+test: config_parser_test server_test
+	./server_test
+	#./config_parser_test
+	#python integration_test.py
 
 clean: 
 	rm -f $(TARGET) *.o *.a serve_server_test config_parser_test serve_response_test *.gcno *.gcda
