@@ -1,4 +1,6 @@
 // An nginx config file parser.
+#ifndef CONFIG_PARSER_H
+#define CONFIG_PARSER_H
 
 #include <iostream>
 #include <memory>
@@ -56,3 +58,5 @@ class NginxConfigParser {
 
   TokenType ParseToken(std::istream* input, std::string* value);
 };
+
+#endif

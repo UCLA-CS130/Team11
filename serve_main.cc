@@ -1,23 +1,24 @@
 #include <cstdlib>
 #include <iostream>
-#include "serve_server.h"
-#include "config_parser.h"
+#include "server.h"
 int main(int argc, char* argv[]) {
 
   try
   {
     if (argc != 2)
     {
-      std::cerr << "Usage: blocking_tcp_echo_server <port>\n";
+      std::cerr << "Usage: ./serve <config_file>\n";
       return 1;
     }
 
-    NginxConfig config;
-    NginxConfigParser parser;
-    parser.Parse(argv[1], &config);
+    Server s;
+    
+    if (s.init(argv[1]) == false) {
+      std::cerr << "Failed to initialize server." << std::endl;
+      exit(EXIT_FAILURE);
+    }
 
-    std::string p = config.statements_[0]->tokens_[1];
-    Server s((short)std::stoi(p));
+    s.listen();
   }
   catch (std::exception& e)
   {
