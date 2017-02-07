@@ -1,6 +1,7 @@
 #include "server_config.h"
 
 ServerConfig::ServerConfig() : port_num(-1) {}
+ServerConfig::~ServerConfig() {}
 
 /**
  * Parse config file for port number and static file paths

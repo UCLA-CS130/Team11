@@ -7,8 +7,7 @@ config_parser_test
 config_parser
 *.gcno
 *.gcda
-serve_server_test
-serve_response_test
+server_test
 config_parser_test
 config_parser
 Makefile~

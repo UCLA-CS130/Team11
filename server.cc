@@ -41,8 +41,8 @@ void Server::build_map() {
 
 bool Server::init(const char* config_file) {
   server_config = new ServerConfig();
-
-  if ( (server_config == nullptr) || (!server_config->parse_config(config_file)) ) {
+  bool config_parsed = server_config->parse_config(config_file);
+  if ( (server_config == nullptr) || (!config_parsed) ) {
     std::cerr << "Error with server's configuration file" << std::endl;
     return false;
   }
