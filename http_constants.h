@@ -29,5 +29,8 @@ const std::string NOT_IMPLEMENTED = "501 Not Implemented";
 
 const std::string DEFAULT_RESPONSE = "<html><h1> Serve is running </h1></html";
 const std::string BAD_RESPONSE = "<html><h1> 400 Bad Request </h1></html";
+const std::string SERVER_ERROR_RESPONSE = "<html><h1> 500 Internal Server Error </h1></html";
+const std::string NOT_FOUND_RESPONSE = "<html><h1> 404 Not Found </h1></html";
+
 
 #endif

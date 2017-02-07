@@ -45,6 +45,8 @@ struct Response {
   std::string status; 
   std::string date;
   std::string server;
+   
+
 
 };
 

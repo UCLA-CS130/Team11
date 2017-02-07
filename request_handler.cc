@@ -13,6 +13,7 @@ using boost::asio::ip::tcp;
 /* REQUEST HANDLER */
 RequestHandler::~RequestHandler() {
   std::cout << "Deconstructing request handler" << std::endl;
+  delete file_stream;
 }
 
 std::string RequestHandler::build_headers() {
@@ -80,8 +81,11 @@ StaticRequestHandler::~StaticRequestHandler() {
   std::cout << "Deconstructing static request handler" << std::endl;
 }
 
+// [TODO] Look into error handling: 
 bool StaticRequestHandler::handle_request() {
   std::cout << "Static request - handle request" << std::endl;
+  headers.push_back(Header(SERVER, resp->server));
+
   std::string file_path = "";
   // Append mapped file path based on URI
   auto it = uri_path_map.find(req->path);
@@ -102,28 +106,65 @@ bool StaticRequestHandler::handle_request() {
     if (boost::filesystem::is_directory(p)) {
       std::cerr << p << " is a directory." << std::endl;
       resp->status = BAD_REQUEST; 
+      return false;
     }
 
     // The file exists, attempt to open file
     std::cout << "Opening file: " << p << std::endl;
-    boost::filesystem::ifstream file_stream(p); 
-
-    if(file_stream.is_open()) {
-      std::cout << "File is opened!" << std::endl;
-      
+    file_stream = new boost::filesystem::ifstream(p);
+    if (file_stream == nullptr) {
+      resp->status = INTERNAL_SERVER_ERROR;
+      headers.push_back(Header(CONTENT_TYPE, HTML)); 
+      std::cerr << "Unable to open file" << std::endl;
+      return false; 
     }
 
-    resp->status = OK; 
+    if(file_stream->is_open()) {
+      std::cout << "File is opened!" << std::endl;
+      headers.push_back(Header(CONTENT_TYPE, req->mime_type)); 
+      resp->status = OK;
+    }
+    else {
+      resp->status = INTERNAL_SERVER_ERROR;
+      headers.push_back(Header(CONTENT_TYPE, HTML)); 
+      std::cerr << "Unable to open file" << std::endl;
+      return false;
+    }
+    
   }
   else {
     std::cerr << "File does not exist, sending 404 response" << std::endl;
     resp->status = NOT_FOUND;
+    return false; 
   }
   return true;
 }
 
 bool StaticRequestHandler::write_body(tcp::socket& sock) {
   std::cout << "static request - write body" << std::endl;
+  char buffer[512];
+  std::string body = "";
+
+  if (resp->status == BAD_REQUEST) {
+    boost::asio::write(sock, boost::asio::buffer(BAD_RESPONSE, BAD_RESPONSE.size()));
+  }
+  else if (resp->status == INTERNAL_SERVER_ERROR) {
+    boost::asio::write(sock, boost::asio::buffer(SERVER_ERROR_RESPONSE, SERVER_ERROR_RESPONSE.size()));
+  }
+  else if (resp->status == NOT_FOUND) {
+    boost::asio::write(sock, boost::asio::buffer(NOT_FOUND_RESPONSE, NOT_FOUND_RESPONSE.size()));
+  }
+  else { // Attempt to write file
+    std::cout << "Attempting to write file" << std::endl;
+    while(file_stream->read(buffer, sizeof(buffer)).gcount() > 0) {
+      body.append(buffer, file_stream->gcount());
+    }
+
+    boost::asio::write(sock, boost::asio::buffer(body.c_str(), body.size()));
+
+
+  }
+
   return true;
 }
 

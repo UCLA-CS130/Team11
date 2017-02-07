@@ -24,7 +24,7 @@ protected:
   std::vector<Header> headers;
   std::string name_value_separator = ": ";
   std::string crlf = "\r\n"; 
-
+  boost::filesystem::ifstream* file_stream = nullptr;
   std::string build_headers(); 
   
 }; 
