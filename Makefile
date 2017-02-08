@@ -32,8 +32,10 @@ server_config_test:
 
 test: config_parser_test server_config_test request_handler_test
 	./config_parser_test
+	./request_handler_test
 	./server_config_test
-	#python integration_test.py
+	python integration_test.py
+
 clean: 
 	rm -f $(TARGET) *.o *.a request_handler_test config_parser_test server_test server_config_test *.gcno *.gcda
 	lsof -P | grep ':9999' | awk '{print $2}' | xargs kill -9
