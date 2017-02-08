@@ -33,10 +33,12 @@ private:
   std::string extension_to_type(std::string ext);
   bool parse_request(char* req_buffer, ParsedRequest* parsed_req); 
 
-  #ifdef TEST_SERVER_CONFIG
+  #ifdef TEST_SERVER
   FRIEND_TEST(ServerInitTest, NullServerConfig);
   FRIEND_TEST(ServerInitTest, ServerConfigError);
   FRIEND_TEST(ServerInitTest, ValidServerConfig);
+  FRIEND_TEST(ServerExtensionToTypeTest, ReturnValidTypeTest);
+  FRIEND_TEST(ServerExtensionToTypeTest, ReturnDefaultTypeTest);
   #endif
   
  
