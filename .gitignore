@@ -3,7 +3,6 @@ serve
 *.dSYM/Contents/Info.plist
 *.o
 *.a
-config_parser_test
 config_parser
 *.gcno
 *.gcda
