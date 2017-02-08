@@ -32,7 +32,9 @@ std::string RequestHandler::build_headers() {
     response_header += h.value_;
     response_header += crlf;
   }
+  std::cout << "Got into build headers!!!!" << std::endl;
   response_header += crlf;
+  std::cout << response_header << std::endl;
   return response_header; 
 }
 
@@ -64,6 +66,7 @@ bool EchoRequestHandler::handle_request() {
   resp->status = OK;
    // [TODO] Set date 
   headers.push_back(Header(SERVER, resp->server));
+  std::cout << resp->server << std::endl;
 
   if (req->URI == ECHO_REQUEST) { 
     headers.push_back(Header(CONTENT_TYPE, req->mime_type));  

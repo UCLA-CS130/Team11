@@ -3,11 +3,11 @@ serve
 *.dSYM/Contents/Info.plist
 *.o
 *.a
-config_parser_test
 config_parser
 *.gcno
 *.gcda
 server_test
+request_handler_test
 config_parser_test
 config_parser
 Makefile~
