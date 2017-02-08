@@ -1,0 +1,9 @@
+listen 8888;
+
+location static1 {
+	root example_dir;
+}
+
+location /static2 {
+	root example_dir_2;
+}

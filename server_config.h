@@ -8,9 +8,10 @@
 struct ServerConfig 
 {
 	ServerConfig();
+	virtual ~ServerConfig();
 	std::map<std::string, std::string> uri_map;
 	short port_num;
-	bool parse_config(const char* arg);
+	virtual bool parse_config(const char* arg);
 };
 
 

@@ -1,6 +1,7 @@
 #include "server_config.h"
 
 ServerConfig::ServerConfig() : port_num(-1) {}
+ServerConfig::~ServerConfig() {}
 
 /**
  * Parse config file for port number and static file paths
@@ -24,51 +25,57 @@ bool ServerConfig::parse_config(const char* arg)
   {
     // Check for port number
     port = config.statements_[i]->tokens_[1];
-    if(isdigit(port[0]))
+   
+    if(port != "")
     {
+        if(isdigit(port[0]))
+        {
 
-      listen_token = config.statements_[i]->tokens_[0];
+          listen_token = config.statements_[i]->tokens_[0];
 
-      if(listen_token == "listen")
-      {
-        port_num = (short) stoi(config.statements_[i]->tokens_[1]);
-      }
+          if(listen_token == "listen")
+          {
+            port_num = (short) stoi(config.statements_[i]->tokens_[1]);
+          }
 
-      else 
-      {
-        std::cerr << "Incorrect configuration for port: " << listen_token << std::endl;
-        std::cerr << "Specify port number as: listen [port];" << std::endl;
+          else 
+          {
+            std::cerr << "Incorrect configuration for port: " << listen_token << std::endl;
+            std::cerr << "Specify port number as: listen [port];" << std::endl;
+            //testing::internal::CaptureStdout();
+            //std::cout << "port number not specified" std::endl;
+            //std::string output = testing::internal::GetCapturedStdout();
+          }
+        }
+        // Check for location 
+        else 
+        {
+          uri = config.statements_[i]->tokens_[1];
+          path = config.statements_[i]->child_block_->statements_[0]->tokens_[1];
+
+          location_token = config.statements_[i]->tokens_[0];
+
+          if(location_token == "location")
+          {
+            if (uri[0] == '/')
+            {
+              uri_map[uri] = path;
+            }
+
+            else
+            {
+              std::cerr << "Incorrect format for location block " << uri << " " << path << std::endl;
+            }
+          } 
+
+          else
+          {
+            std::cerr << "Configuration not supported: " << location_token << std::endl;
+
+          }
+        }
       }
     }
-    // Check for location 
-    else 
-    {
-      uri = config.statements_[i]->tokens_[1];
-      path = config.statements_[i]->child_block_->statements_[0]->tokens_[1];
-
-      location_token = config.statements_[i]->tokens_[0];
-
-      if(location_token == "location")
-      {
-        if (uri[0] == '/')
-        {
-          uri_map[uri] = path;
-        }
-
-        else
-        {
-          std::cerr << "Incorrect format for location block " << uri << " " << path << std::endl;
-        }
-      } 
-
-      else
-      {
-        std::cerr << "Configuration not supported: " << location_token << std::endl;
-
-      }
-    }
-  }
-
   // Verify port number is set
   if (port_num == -1) 
   {
