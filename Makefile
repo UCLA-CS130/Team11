@@ -34,6 +34,7 @@ request_handler_test:
 test: config_parser_test server_test request_handler_test
 	./config_parser_test
 	./server_test
+	./request_handler_test
 	python integration_test.py
 
 clean: 

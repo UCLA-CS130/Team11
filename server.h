@@ -39,6 +39,9 @@ private:
   FRIEND_TEST(ServerInitTest, ValidServerConfig);
   FRIEND_TEST(ServerExtensionToTypeTest, ReturnValidTypeTest);
   FRIEND_TEST(ServerExtensionToTypeTest, ReturnDefaultTypeTest);
+  FRIEND_TEST(ParseRequestTest, InvalidRequest);
+  FRIEND_TEST(ParseRequestTest, ValidRequest);
+  FRIEND_TEST(ParseRequestTest, ValidFileRequest);
   #endif
   
  
