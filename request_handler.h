@@ -46,6 +46,7 @@ public:
 private:
   #ifdef TEST_REQUEST_HANDLER
   FRIEND_TEST(RequestHandlerTest, BuildHeader);
+  FRIEND_TEST(RequestHandlerTest, HandleDefaultRequest);
   #endif
 };
 

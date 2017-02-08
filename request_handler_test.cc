@@ -36,7 +36,7 @@ TEST_F(RequestHandlerTest, HandleEmptyEchoRequest)
 	ASSERT_FALSE(echo_request_handler.handle_request());
 }
 
-// Echo Request with empty input
+// Echo Request with URI set to ECHO_REQUEST and empty input
 TEST_F(RequestHandlerTest, HandleSimpleEchoRequest)
 {
 	BuildParsedRequest();
@@ -45,6 +45,19 @@ TEST_F(RequestHandlerTest, HandleSimpleEchoRequest)
 	parsed_request->URI = ECHO_REQUEST;
 	EchoRequestHandler echo_request_handler(parsed_request, uri_map, &server_response);
 	ASSERT_TRUE(echo_request_handler.handle_request());
+}
+
+// Echo Request with URI set to DEFAULT_REQUEST and empty input
+TEST_F(RequestHandlerTest, HandleDefaultRequest)
+{
+	BuildParsedRequest();
+	std::map<std::string, std::string> uri_map;
+	Response server_response;
+	parsed_request->URI = DEFAULT_REQUEST;
+	// header value should be HTML
+	EchoRequestHandler echo_request_handler(parsed_request, uri_map, &server_response);
+	ASSERT_TRUE(echo_request_handler.handle_request());
+	EXPECT_EQ(echo_request_handler.headers.back().value_, HTML);
 }
 
 // Static Request with Bad Path should return false
