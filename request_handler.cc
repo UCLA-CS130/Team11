@@ -32,7 +32,6 @@ std::string RequestHandler::build_headers() {
     response_header += h.value_;
     response_header += crlf;
   }
-  std::cout << "Got into build headers!!!!" << std::endl;
   response_header += crlf;
   std::cout << response_header << std::endl;
   return response_header; 
