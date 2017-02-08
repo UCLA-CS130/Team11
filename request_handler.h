@@ -3,6 +3,11 @@
 
 #include <boost/asio.hpp>
 #include "server_containers.h"
+
+#ifdef TEST_REQUEST_HANDLER
+#include "gtest/gtest_prod.h"
+#endif
+
 using boost::asio::ip::tcp;
 
 class RequestHandler {
@@ -38,6 +43,10 @@ public:
 
   bool handle_request();
   bool write_body(tcp::socket& sock);
+private:
+  #ifdef TEST_REQUEST_HANDLER
+  FRIEND_TEST(HeaderTest, BuildHeader);
+  #endif
 };
 
 class StaticRequestHandler : public RequestHandler {

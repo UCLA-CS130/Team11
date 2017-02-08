@@ -6,6 +6,8 @@
 
 #include "server_containers.h"
 #include "server_config.h"
+#include "gtest/gtest_prod.h"
+
 
 using boost::asio::ip::tcp;
 
@@ -27,6 +29,8 @@ private:
   void build_map();
   std::string extension_to_type(std::string ext);
   bool parse_request(char* req_buffer, ParsedRequest* parsed_req); 
+
+  FRIEND_TEST(ServerInitTest, NullServerConfig);
  
 };
 
