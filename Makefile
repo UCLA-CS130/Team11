@@ -30,12 +30,15 @@ server_test:
 request_handler_test:
 	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include request_handler_test.cc server_config.cc config_parser.cc request_handler.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o request_handler_test
 
+server_config_test:
+	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include server_config_test.cc server.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o server_config_test
 
-test: config_parser_test server_test request_handler_test
+test: config_parser_test server_config_test request_handler_test
 	./config_parser_test
-	./server_test
 	./request_handler_test
+	./server_config_test
 	python integration_test.py
 
 clean: 
-	rm -f $(TARGET) *.o *.a request_handler_test config_parser_test server_test *.gcno *.gcda
+	rm -f $(TARGET) *.o *.a request_handler_test config_parser_test server_test server_config_test *.gcno *.gcda
+	lsof -P | grep ':9999' | awk '{print $2}' | xargs kill -9

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <gmock/gmock.h>
+
 #include "gtest/gtest.h"
 #include "config_parser.h"
 #include "server.h"
@@ -101,7 +102,6 @@ TEST_F(ParseRequestTest, ValidFileRequest) {
   EXPECT_EQ("seal.jpg", req.file);
   EXPECT_EQ("image/jpeg", req.mime_type);
 }
-
 
 
 
