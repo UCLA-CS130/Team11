@@ -27,12 +27,16 @@ config_parser_test:
 #serve_response_test:
 	#$(CC) -std=c++0x -isystem ${GTEST_DIR}/include serve_response_test.cc server.cc serve_response.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o serve_response_test
 
-test: config_parser_test
+server_config_test:
+	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include server_config_test.cc server.cc config_parser.cc request_handler.cc server_config.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o server_config_test
+
+test: config_parser_test server_config_test
 	./config_parser_test
-	python integration_test.py
+	./server_config_test
+	#python integration_test.py
 
 clean: 
-	rm -f $(TARGET) *.o *.a serve_server_test config_parser_test serve_response_test *.gcno *.gcda
+	rm -f $(TARGET) *.o *.a config_parser_test server_config_test *.gcno *.gcda
 	lsof -P | grep ':9999' | awk '{print $2}' | xargs kill -9
 
 
