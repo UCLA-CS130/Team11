@@ -11,81 +11,80 @@
 
 using boost::asio::ip::tcp;
 
-// Empty Request should return false 
-TEST(EchoRequestHandlerTest, HandleEmptyRequest)
-{
-	char* request_buffer = "";
-	std::size_t request_buffer_size = 0;
+// Test Fixture
+class RequestHandlerTest : public ::testing::Test {
 
-	ParsedRequest parsed_request(request_buffer, request_buffer_size);
+    protected:
+        void BuildParsedRequest() {
+            request_buffer = "";
+			request_buffer_size = 0;
+			parsed_request = new ParsedRequest(request_buffer, request_buffer_size);
+        }
+
+		char* request_buffer;
+		std::size_t request_buffer_size;
+		ParsedRequest *parsed_request;
+}; 
+
+// Empty Request should return false 
+TEST_F(RequestHandlerTest, HandleEmptyEchoRequest)
+{
+	BuildParsedRequest();
 	std::map<std::string, std::string> uri_map;
 	Response server_response;
-	EchoRequestHandler echo_request_handler(&parsed_request, uri_map, &server_response);
+	EchoRequestHandler echo_request_handler(parsed_request, uri_map, &server_response);
 	ASSERT_FALSE(echo_request_handler.handle_request());
 }
 
-// Echo Request should return true
-TEST(EchoRequestHandlerTest, HandleEchoRequest)
+// Echo Request with empty input
+TEST_F(RequestHandlerTest, HandleSimpleEchoRequest)
 {
-	char* request_buffer = "";
-	std::size_t request_buffer_size = 0;
-
-	ParsedRequest parsed_request(request_buffer, request_buffer_size);
+	BuildParsedRequest();
 	std::map<std::string, std::string> uri_map;
 	Response server_response;
-	parsed_request.URI = ECHO_REQUEST;
-	EchoRequestHandler echo_request_handler(&parsed_request, uri_map, &server_response);
+	parsed_request->URI = ECHO_REQUEST;
+	EchoRequestHandler echo_request_handler(parsed_request, uri_map, &server_response);
 	ASSERT_TRUE(echo_request_handler.handle_request());
 }
 
-// TEST build_headers
-
 // Static Request with Bad Path should return false
-TEST(StaticRequestHandlerTest, HandleBadPath1)
+TEST_F(RequestHandlerTest, StaticHandleBadPath1)
 {
-	char* request_buffer = "";
-	std::size_t request_buffer_size = 0;
-
-	ParsedRequest parsed_request(request_buffer, request_buffer_size);
+	BuildParsedRequest();
 	std::map<std::string, std::string> uri_map;
 	Response server_response;
 	server_response.server = "my_server";
-	StaticRequestHandler static_request_handler(&parsed_request, uri_map, &server_response);
+	StaticRequestHandler static_request_handler(parsed_request, uri_map, &server_response);
 	ASSERT_FALSE(static_request_handler.handle_request())
 	<< "File does not exist";
 }
 
 // Static Request with Bad Path should return false
-TEST(StaticRequestHandlerTest, HandleBadPath2)
+TEST_F(RequestHandlerTest, StaticHandleBadPath2)
 {
-	char* request_buffer = "";
-	std::size_t request_buffer_size = 0;
-
-	ParsedRequest parsed_request(request_buffer, request_buffer_size);
+	BuildParsedRequest();
 	std::map<std::string, std::string> uri_map;
 	Response server_response;
 	server_response.server = "my_server";
-	StaticRequestHandler static_request_handler(&parsed_request, uri_map, &server_response);
+	StaticRequestHandler static_request_handler(parsed_request, uri_map, &server_response);
 	static_request_handler.handle_request();
 	ASSERT_EQ(server_response.status, NOT_FOUND)
 	<< "Status set to not found";
 }
 
 // Build a header using write headers and compare to expected string
-TEST(HeaderTest, BuildHeader)
+TEST_F(RequestHandlerTest, BuildHeader)
 {
-	char* request_buffer = "";
-	std::size_t request_buffer_size = 0;
+	BuildParsedRequest();
 	char* expected_response_buffer = "HTTP/1.1 200 OK\r\nServer: Serve 2.0\r\nContent-Type: text/plain\r\n\r\n";
-	ParsedRequest parsed_request(request_buffer, request_buffer_size);
-	parsed_request.URI = ECHO_REQUEST;
-	parsed_request.HTTP = "HTTP/1.1";
-	parsed_request.mime_type = "text/plain";
-	parsed_request.print_contents();
+	parsed_request->URI = ECHO_REQUEST;
+	parsed_request->HTTP = "HTTP/1.1";
+	parsed_request->mime_type = "text/plain";
+	parsed_request->print_contents();
 	
 	std::map<std::string, std::string> uri_map;
 	Response server_response;
-	EchoRequestHandler echo_request_handler(&parsed_request, uri_map, &server_response);
+	EchoRequestHandler echo_request_handler(parsed_request, uri_map, &server_response);
 
 	echo_request_handler.handle_request();
 	std::string response_buffer = echo_request_handler.build_headers();

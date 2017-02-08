@@ -45,7 +45,7 @@ public:
   bool write_body(tcp::socket& sock);
 private:
   #ifdef TEST_REQUEST_HANDLER
-  FRIEND_TEST(HeaderTest, BuildHeader);
+  FRIEND_TEST(RequestHandlerTest, BuildHeader);
   #endif
 };
 
