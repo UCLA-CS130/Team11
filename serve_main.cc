@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
       exit(EXIT_FAILURE);
     }
 
-    s.listen();
+    // s.listen();
   }
   catch (std::exception& e)
   {

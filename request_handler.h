@@ -1,64 +1,56 @@
 #ifndef REQUEST_HANDLER_H
 #define REQUEST_HANDLER_H
 
-#include <boost/asio.hpp>
-#include "server_containers.h"
-
-#ifdef TEST_REQUEST_HANDLER
-#include "gtest/gtest_prod.h"
-#endif
-
-using boost::asio::ip::tcp;
+#include <map>
+#include <iostream>
+#include <memory>
+#include <string>
 
 class RequestHandler {
-public:
-  RequestHandler() {}
-  RequestHandler(ParsedRequest* parsed_req, std::map<std::string, std::string> m, Response* server_resp)
-  : req(parsed_req), resp(server_resp), uri_path_map(m)  {}
-  virtual ~RequestHandler();
+ public:
+  enum Status {
+    OK = 0
+    // Define your status codes here.
+  };
 
-  bool write_headers(tcp::socket& sock);
-  
-  virtual bool handle_request() = 0; 
-  virtual bool write_body(tcp::socket& sock) = 0;
-
-protected:
-  ParsedRequest* req;
-  Response* resp; 
-  std::map<std::string, std::string> uri_path_map;
-  std::vector<Header> headers;
-  std::string name_value_separator = ": ";
-  std::string crlf = "\r\n"; 
-  boost::filesystem::ifstream* file_stream = nullptr;
-  std::string build_headers(); 
-  
-}; 
-
-class EchoRequestHandler : public RequestHandler {
-public:
-  EchoRequestHandler(ParsedRequest* parsed_req, std::map<std::string, std::string> m, Response* server_resp)
-  : RequestHandler(parsed_req, m, server_resp) {}
-  
-  ~EchoRequestHandler(); 
-
-  bool handle_request();
-  bool write_body(tcp::socket& sock);
-private:
-  #ifdef TEST_REQUEST_HANDLER
-  FRIEND_TEST(RequestHandlerTest, BuildHeader);
-  FRIEND_TEST(RequestHandlerTest, HandleDefaultRequest);
-  #endif
+  // Temporary handle request for testing register
+  virtual void HandleRequest(void) = 0;
+  static RequestHandler* CreateByName(const char* type);
 };
 
-class StaticRequestHandler : public RequestHandler {
-public:
-  StaticRequestHandler(ParsedRequest* parsed_req, std::map<std::string, std::string> m, Response* server_resp)
-  : RequestHandler(parsed_req, m, server_resp) {}
-  
-  ~StaticRequestHandler(); 
-
-  bool handle_request();
-  bool write_body(tcp::socket& sock);
+// Registerer code taken from: https://github.com/jfarrell468/registerer
+extern std::map<std::string, RequestHandler* (*)(void)>* request_handler_builders;
+template<typename T>
+class RequestHandlerRegisterer {
+ public:
+  RequestHandlerRegisterer(const std::string& type) {
+    if (request_handler_builders == nullptr) {
+      request_handler_builders = new std::map<std::string, RequestHandler* (*)(void)>;
+    }
+    (*request_handler_builders)[type] = RequestHandlerRegisterer::Create;
+  }
+  static RequestHandler* Create() {
+    return new T;
+  }
 };
 
-#endif
+#define REGISTER_REQUEST_HANDLER(ClassName) \
+  static RequestHandlerRegisterer<ClassName> ClassName##__registerer(#ClassName)
+
+/** REQUEST HANDLERS */
+
+class EchoHandler : public RequestHandler {
+ public:
+  virtual void HandleRequest(void);
+};
+
+REGISTER_REQUEST_HANDLER(EchoHandler);
+
+class StaticFileHandler : public RequestHandler {
+ public:
+  virtual void HandleRequest(void);
+};
+
+REGISTER_REQUEST_HANDLER(StaticFileHandler);
+
+#endif  // REQUEST_HANDLER_H
