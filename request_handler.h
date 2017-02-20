@@ -5,17 +5,36 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <boost/log/trivial.hpp>
+#include <boost/filesystem.hpp>
+
+
+#include "config_parser.h"
 
 class RequestHandler {
- public:
+public:
   enum Status {
-    OK = 0
+    OK = 0,
+    MISSING_ROOT = 1,
+    INVALID_PATH = 2
     // Define your status codes here.
   };
+
+  // Initializes the handler. Returns a response code indicating success or
+  // failure condition.
+  // uri_prefix is the value in the config file that this handler will run for.
+  // config is the contents of the child block for this handler ONLY.
+  virtual Status Init(const std::string& uri_prefix,
+                      const NginxConfig& config) = 0;
 
   // Temporary handle request for testing register
   virtual void HandleRequest(void) = 0;
   static RequestHandler* CreateByName(const char* type);
+  std::string uri() { return uri_;}
+
+protected:
+  std::string uri_;
+  std::string root_; 
 };
 
 // Registerer code taken from: https://github.com/jfarrell468/registerer
@@ -41,16 +60,18 @@ class RequestHandlerRegisterer {
 
 class EchoHandler : public RequestHandler {
  public:
+  virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
   virtual void HandleRequest(void);
 };
 
 REGISTER_REQUEST_HANDLER(EchoHandler);
 
-class StaticFileHandler : public RequestHandler {
+class StaticHandler : public RequestHandler {
  public:
+  virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
   virtual void HandleRequest(void);
 };
 
-REGISTER_REQUEST_HANDLER(StaticFileHandler);
+REGISTER_REQUEST_HANDLER(StaticHandler);
 
 #endif  // REQUEST_HANDLER_H

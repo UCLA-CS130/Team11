@@ -36,5 +36,9 @@ bool Server::init(const char* config_file) {
   init_acceptor(); 
 
   // Construct the request handlers
+  if(!server_config->build_handlers()) {
+    BOOST_LOG_TRIVIAL(fatal) << "Zero handlers were specified or successfully built";
+    return false; 
+  }
   return true;
 }

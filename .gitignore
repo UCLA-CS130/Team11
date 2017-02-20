@@ -6,6 +6,7 @@ serve
 config_parser
 *.gcno
 *.gcda
+*.old
 server_test
 server_config_test
 request_handler_test

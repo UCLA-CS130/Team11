@@ -6,7 +6,8 @@
 // CONFIG: 
 const int MAX_PORT_NUM = 65535;
 const std::string PORT = "port"; 
-const std::string PATH = "path";  
+const std::string PATH = "path"; 
+const std::string ROOT = "root"; 
 
 // SERVER:
 const std::string DEFAULT_REQUEST = "/";
