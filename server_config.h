@@ -2,16 +2,25 @@
 #define SERVER_CONFIG_H
 
 #include <map>
+#include <vector>
 #include <iostream>
+#include <string>
 #include "config_parser.h"
+#include "request_handler.h"
 
-struct ServerConfig 
+class ServerConfig 
 {
-	ServerConfig();
-	virtual ~ServerConfig();
-	std::map<std::string, std::string> uri_map;
-	short port_num;
-	virtual bool parse_config(const char* arg);
+public:
+  ServerConfig() : port_(-1) {}
+  ~ServerConfig(); 
+  bool parse_config(const char* arg); 
+  int get_port();
+  bool get_handler_config(NginxConfigStatement* statement, NginxConfig* handler_config);  
+
+private: 
+  NginxConfig* config_; 
+  int port_;
+  std::map<std::string, RequestHandler*> handler_map; 
 };
 
 

@@ -3,6 +3,11 @@
 
 #include <string>
 
+// CONFIG: 
+const int MAX_PORT_NUM = 65535;
+const std::string PORT = "port"; 
+const std::string PATH = "path";  
+
 // SERVER:
 const std::string DEFAULT_REQUEST = "/";
 const std::string ECHO_REQUEST = "/echo";
