@@ -25,11 +25,11 @@ bool Server::init(const char* config_file) {
   server_config = new ServerConfig(); 
 
   if (!server_config->parse_config(config_file)) {
-    // LOG_FATAL: Malformed config file
+    BOOST_LOG_TRIVIAL(fatal) << "Malformed config file";
     return false; 
   }
   else if (server_config->get_port() == -1 || server_config->get_port() == MAX_PORT_NUM) {
-    // LOG_FATAL: Port number not found or port number exceeds max value 
+    BOOST_LOG_TRIVIAL(fatal) << "Port number not found or port number exceeds max value of " << MAX_PORT_NUM; 
     return false; 
   }
 

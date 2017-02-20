@@ -3,6 +3,7 @@
 
 
 #include <boost/asio.hpp>
+#include <boost/log/trivial.hpp>
 #include <iostream>
 
 #include "server_config.h"
