@@ -8,8 +8,9 @@
 #include <boost/log/trivial.hpp>
 #include <boost/filesystem.hpp>
 
-
+#include "response.h"
 #include "config_parser.h"
+#include "request.h"
 
 class RequestHandler {
 public:

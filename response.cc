@@ -21,9 +21,7 @@ void Response::AddHeader(const std::string& header_name, const std::string& head
 std::string Response::ToString()
 {
   std::string response_header = "";
-  //fix status portion
-  response_header += "HTTP/1.0 " +  getTextForEnum(status_) + CRLF;
-
+  response_header += "HTTP/1.1 " + getTextForEnum(status_) + CRLF;
   for (unsigned int i = 0; i < headers_container_.size(); ++i)
   {
     response_header += headers_container_[i].first;
@@ -44,15 +42,15 @@ std::string Response::getTextForEnum( int enumVal )
   switch( enumVal )
   {
     case ResponseCode::OK:
-      return "200 OK";
+      return HTTP_OK;
     case ResponseCode::INTERNAL_SERVER_ERROR:
-      return "500 INTERNAL SERVER ERROR";
+      return HTTP_INTERNAL_SERVER_ERROR;
     case ResponseCode::NOT_FOUND:
-      return "404 NOT FOUND";
+      return HTTP_NOT_FOUND;
     case ResponseCode::FORBIDDEN:
-      return "403 FORBIDDEN";
+      return HTTP_FORBIDDEN;
     case ResponseCode::BAD_REQUEST:
-      return "400 BAD REQUEST";
+      return HTTP_BAD_REQUEST;
 
     default:
       return "NOT RECOGNIZED";

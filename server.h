@@ -7,6 +7,7 @@
 
 #include "server_config.h"
 #include "request.h"
+#include "response.h"
 
 using boost::asio::ip::tcp;
 
