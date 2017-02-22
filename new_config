@@ -12,5 +12,7 @@ path /static2 StaticHandler {
 
 path /echo EchoHandler {}
 
+path /status StatusHandler {}
+
 # Default response handler if no handlers match.
 default NotFoundHandler {}
