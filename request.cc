@@ -44,7 +44,6 @@ std::unique_ptr<Request> Request::Parse(const std::string& raw_request) {
   boost::split(reqs,lines[0],boost::is_any_of(" "));
 
    if (reqs.size() != 3) {
-    BOOST_LOG_TRIVIAL(info) << "Malformed request.";
     return nullptr;
   }
 
