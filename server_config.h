@@ -30,7 +30,7 @@ public:
 private: 
   NginxConfig* config_; 
   int port_;
-  std::map<std::string, std::unique_ptr<RequestHandler>> handler_map_; 
+  std::map<std::string, std::shared_ptr<RequestHandler>> handler_map_; 
   bool well_formed_uri(std::string); 
   bool get_handler_config(std::shared_ptr<NginxConfigStatement>& statement, std::unique_ptr<NginxConfig>& handler_config);
 

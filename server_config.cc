@@ -90,6 +90,11 @@ bool ServerConfig::build_handlers() {
       }
 
       auto it = handler_map_.find(uri); 
+      // TODO: Do longest matching prefix check here
+      // If /static1/foo exists already and we are attempting to add
+      // /static1 to the map, we will state that /static1 exists already
+      // because /static1/foo is the longest matching prefix
+      
       if (it != handler_map_.end()) {
         BOOST_LOG_TRIVIAL(warning) << uri << " exists already. Ignoring path block";
         continue;
@@ -124,8 +129,8 @@ bool ServerConfig::build_handlers() {
         continue;
       }
 
-      std::unique_ptr<RequestHandler> tmp(req_handler);
-      handler_map_[uri] = std::move(tmp);
+      std::shared_ptr<RequestHandler> tmp(req_handler);
+      handler_map_[uri] = tmp;
 
     }
   }
