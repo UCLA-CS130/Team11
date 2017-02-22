@@ -61,7 +61,7 @@ std::unique_ptr<Request> Request::Parse(const std::string& raw_request) {
   parsed_request->mime_type_ = extension_to_type(ext); 
 
   // Handle headers and body
-  for(int i = 1; i < lines.size(); i++){
+  for(unsigned int i = 1; i < lines.size(); i++){
     std::string header_name;
     std::string header_value;
 
