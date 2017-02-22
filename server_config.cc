@@ -112,6 +112,9 @@ bool ServerConfig::build_handlers() {
       // TODO: Incorporate the 'default NotFoundHandler{}'
       if (req_handler == nullptr) {
         BOOST_LOG_TRIVIAL(warning) << handler << " is not implemented. Ignoring path block.";
+        //NotFoundHandler
+        RequestHandler::Status init = req_handler->Init(uri, *handler_config);
+
         continue; 
       }
 
