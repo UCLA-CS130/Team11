@@ -16,8 +16,12 @@ RequestHandler::Status EchoHandler::Init(const std::string& uri_prefix, const Ng
   uri_ = uri_prefix; 
   return OK;
 }
-void EchoHandler::HandleRequest(void) {
-  std::cout << "EchoHandler::HandleRequest called" << std::endl;
+
+RequestHandler::Status EchoHandler::HandleRequest(const Request& request, Response* response) {
+  response->SetStatus(Response::OK); 
+  response->AddHeader(CONTENT_TYPE, request.mime_type()); 
+  response->SetBody(request.raw_request());
+  return OK; 
 }
 
 /** STATIC FILE HANDLER */
@@ -48,6 +52,6 @@ RequestHandler::Status StaticHandler::Init(const std::string& uri_prefix, const 
   return MISSING_ROOT;
 }
 
-void StaticHandler::HandleRequest(void) {
-  std::cout << "StaticHandler::HandleRequest called" << std::endl;
+RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Response* response) {
+  return OK; 
 }

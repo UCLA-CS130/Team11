@@ -81,9 +81,21 @@ void Server::listen() {
         continue;
       }
 
-      handler->HandleRequest(); 
-      
+      // Handle Request
+      Response resp; 
+      RequestHandler::Status request_status = handler->HandleRequest(*parsed_request, &resp); 
 
+      if (request_status == RequestHandler::Status::OK) {
+        std::cout << "Contents of resp after handle request:\n" << resp.ToString();
+        std::string req_to_write = resp.ToString();
+        boost::asio::write(socket, boost::asio::buffer(req_to_write, req_to_write.size()));
+      }
+      else {
+        BOOST_LOG_TRIVIAL(warning) << "Error with handling request"; 
+        // TODO: If request_status is not OK, evoke a different handler ie 404 
+      }
+      
+ 
     }
   }
   catch (std::exception& e)

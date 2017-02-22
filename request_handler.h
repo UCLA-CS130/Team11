@@ -28,8 +28,9 @@ public:
   virtual Status Init(const std::string& uri_prefix,
                       const NginxConfig& config) = 0;
 
-  // Temporary handle request for testing register
-  virtual void HandleRequest(void) = 0;
+  virtual Status HandleRequest(const Request& request,
+                               Response* response) = 0;
+
   static RequestHandler* CreateByName(const char* type);
   std::string uri() { return uri_;}
 
@@ -62,7 +63,7 @@ class RequestHandlerRegisterer {
 class EchoHandler : public RequestHandler {
  public:
   virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
-  virtual void HandleRequest(void);
+  virtual Status HandleRequest(const Request& request, Response* response);
 };
 
 REGISTER_REQUEST_HANDLER(EchoHandler);
@@ -70,7 +71,7 @@ REGISTER_REQUEST_HANDLER(EchoHandler);
 class StaticHandler : public RequestHandler {
  public:
   virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
-  virtual void HandleRequest(void);
+  virtual Status HandleRequest(const Request& request, Response* response);
 };
 
 REGISTER_REQUEST_HANDLER(StaticHandler);
