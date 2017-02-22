@@ -16,8 +16,15 @@ RequestHandler::Status EchoHandler::Init(const std::string& uri_prefix, const Ng
   uri_ = uri_prefix; 
   return OK;
 }
-void EchoHandler::HandleRequest(void) {
-  std::cout << "EchoHandler::HandleRequest called" << std::endl;
+
+RequestHandler::Status EchoHandler::HandleRequest(const Request& request, Response* response) {
+  if (response == nullptr) {
+    return INVALID_RESPONSE;
+  }
+  response->SetStatus(Response::OK); 
+  response->AddHeader(CONTENT_TYPE, request.mime_type()); 
+  response->SetBody(request.raw_request());
+  return OK; 
 }
 
 /** STATIC FILE HANDLER */
@@ -48,6 +55,42 @@ RequestHandler::Status StaticHandler::Init(const std::string& uri_prefix, const 
   return MISSING_ROOT;
 }
 
-void StaticHandler::HandleRequest(void) {
-  std::cout << "StaticHandler::HandleRequest called" << std::endl;
+RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Response* response) {
+  if (response == nullptr) {
+    return INVALID_RESPONSE;
+  }
+
+  response->SetStatus(Response::OK); 
+  response->AddHeader(CONTENT_TYPE, request.mime_type());
+
+  std::string file_path = root_ + "/" + request.file(); 
+
+  BOOST_LOG_TRIVIAL(debug) << "File path to be opened: " << file_path << std::endl;
+
+  // Verify if file exists:
+  boost::filesystem::path p(file_path);
+  if (boost::filesystem::exists(p) && !boost::filesystem::is_directory(p)) {
+    // Attempt to open file:
+    boost::filesystem::ifstream* file_stream = new boost::filesystem::ifstream(p);
+    if (file_stream == nullptr || !file_stream->is_open()) {
+      // TODO: For now it will be handled by 404, by this is better as a 500 Internal Service Error
+      BOOST_LOG_TRIVIAL(warning) << "The file at " << file_path << "does not exist or is unabled to be opened"; 
+      return FILE_NOT_FOUND; 
+    }
+
+    // Attempt to read in file and write to body string
+    char buffer[512]; 
+    std::string body = "";
+    while(file_stream->read(buffer, sizeof(buffer)).gcount() > 0) {
+      body.append(buffer, file_stream->gcount());
+    }
+
+    response->SetBody(body); 
+    //TODO: Potentially have some checks here? 
+  }
+  else {
+    return FILE_NOT_FOUND; 
+  }
+
+  return OK; 
 }

@@ -28,14 +28,14 @@ const std::string SERVER = "Server";
 const std::string DATE = "Date"; 
 
 // HTTP STATUS CODES: 
-const std::string OK = "200 OK";
-const std::string BAD_REQUEST = "400 Bad Request";
-const std::string NOT_FOUND = "404 Not Found";
-const std::string INTERNAL_SERVER_ERROR = "500 Internal Server Error";
-const std::string NOT_IMPLEMENTED = "501 Not Implemented";
+const std::string HTTP_OK = "200 OK";
+const std::string HTTP_BAD_REQUEST = "400 Bad Request";
+const std::string HTTP_NOT_FOUND = "404 Not Found";
+const std::string HTTP_INTERNAL_SERVER_ERROR = "500 Internal Server Error";
+const std::string HTTP_NOT_IMPLEMENTED = "501 Not Implemented";
+const std::string HTTP_FORBIDDEN = "403 Forbidden";
 
 // RESPONSE TEMPLATES:
-
 const std::string DEFAULT_RESPONSE = "<html><h1> Serve is running </h1></html";
 const std::string BAD_RESPONSE = "<html><h1> 400 Bad Request </h1></html";
 const std::string SERVER_ERROR_RESPONSE = "<html><h1> 500 Internal Server Error </h1></html";

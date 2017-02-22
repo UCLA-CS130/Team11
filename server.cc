@@ -74,16 +74,39 @@ void Server::listen() {
       BOOST_LOG_TRIVIAL(info) << "Received the following request:";
       parsed_request->print_contents();
 
-      // Route request: 
-      std::shared_ptr<RequestHandler> handler = server_config_->get_handler(parsed_request->uri()); 
+      // Route request:
+      // Attempt to find handler based on path (this is for requests specifying a file) 
+      std::shared_ptr<RequestHandler> handler = server_config_->get_handler(parsed_request->path()); 
       if (handler == nullptr) {
-        BOOST_LOG_TRIVIAL(warning) << "Handler not found. Ignoring request";
-        continue;
+        // Attempt to call by uri() instead (this is for requests not specifying a file)
+        handler = server_config_->get_handler(parsed_request->uri()); 
+
+        // Neither attempts worked, no handler found
+        if (handler == nullptr) {
+          BOOST_LOG_TRIVIAL(warning) << "Handler not found. Ignoring request";
+          continue;
+        }
       }
 
-      handler->HandleRequest(); 
-      
+      // Handle Request
+      Response resp; 
+      RequestHandler::Status request_status = handler->HandleRequest(*parsed_request, &resp); 
 
+      if (request_status == RequestHandler::Status::OK) {
+        std::string req_to_write = resp.ToString();
+        boost::asio::write(socket, boost::asio::buffer(req_to_write.c_str(), req_to_write.size()));
+      }
+      else {
+        BOOST_LOG_TRIVIAL(warning) << "Error with handling request"; 
+        // TODO: If request_status is not OK, evoke a different handler ie 404 
+        // We should probably make this a series of if statements due to the specific nature of some
+        // of the statuses 
+        
+        // By default, resp is set with a response code of OK, we should update to the correct response
+        // code here 
+      }
+      
+ 
     }
   }
   catch (std::exception& e)
