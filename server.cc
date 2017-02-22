@@ -66,8 +66,23 @@ void Server::listen() {
       Request r(string_req);
       auto parsed_request = r.Parse(string_req);
 
+      if (parsed_request == nullptr) {
+        BOOST_LOG_TRIVIAL(warning) << "Malformed request. Ignoring request";
+        continue;
+      }
+
       BOOST_LOG_TRIVIAL(info) << "Received the following request:";
       parsed_request->print_contents();
+
+      // Route request: 
+      std::shared_ptr<RequestHandler> handler = server_config_->get_handler(parsed_request->uri()); 
+      if (handler == nullptr) {
+        BOOST_LOG_TRIVIAL(warning) << "Handler not found. Ignoring request";
+        continue;
+      }
+
+      handler->HandleRequest(); 
+      
 
     }
   }

@@ -143,3 +143,11 @@ bool ServerConfig::build_handlers() {
   return true;
 }
 
+std::shared_ptr<RequestHandler> ServerConfig::get_handler(std::string uri) {
+  auto it = handler_map_.find(uri);
+  if (it != handler_map_.end()) {
+     return it->second;
+  }
+  return nullptr;
+}
+

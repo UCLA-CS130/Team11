@@ -25,6 +25,7 @@ public:
   bool build_handlers(); 
   int get_port();
   std::string handler_map_content();
+  std::shared_ptr<RequestHandler> get_handler(std::string uri); 
 
 
 private: 
