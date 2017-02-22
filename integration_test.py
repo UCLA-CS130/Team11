@@ -1,5 +1,6 @@
 import sys, os, subprocess
 import requests
+import time
 
 class ExpectedResponse: 
   body = ""
@@ -15,8 +16,12 @@ def send_request(req, expected):
   print 'Performing the following request: ', req
   try:
     r = session.get(req)
-  except requests.exceptions.RequestException:
-    serv.kill(); 
+  except requests.exceptions.ConnectionError:
+    time.sleep(1)
+    r = session.get(req)
+  except requests.exceptions.RequestException as e:
+    serv.kill()
+    print e
     print 'Connection refused'
     sys.exit(1)
 
@@ -52,7 +57,7 @@ if subprocess.call(["sudo","make"]) != 0:
   sys.exit(1)
 
 print 'Running webserver...'
-serv = subprocess.Popen(["./serve", "demo_config"])
+serv = subprocess.Popen(["./serve", "new_config"])
 
 print 'Sending requests to server...'
 # Proxy issue fix:
@@ -61,11 +66,11 @@ session.trust_env = False
 
 echo = ExpectedResponse("GET /echo HTTP/1.1\r\nHost: localhost:9999", "text/plain", 200)
 static = ExpectedResponse("<html>\n\t<h1> This is an example html file </h1>", "text/html", 200)
-bad = ExpectedResponse("<html><h1> 404 Not Found </h1></html", "text/html", 404)
+# bad = ExpectedResponse("<html><h1> 404 Not Found </h1></html", "text/html", 404)
 
 send_request('http://localhost:9999/echo', echo)
 send_request('http://localhost:9999/static1/hello.html', static)
-send_request('http://localhost:9999/static1/missing.jpg', bad)
+# send_request('http://localhost:9999/static1/missing.jpg', bad)
 
 print 'Terminating webserver...'
 serv.kill(); 

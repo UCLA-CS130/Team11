@@ -30,17 +30,6 @@ class NginxStringConfigTest : public ::testing::Test {
         NginxConfig out_config_; 
 }; 
 
-TEST(FileParsingTest, SimpleConfig) {
-  NginxConfigParser parser;
-  NginxConfig out_config;
-
-  bool success = parser.Parse("example_config", &out_config);
-
-  EXPECT_TRUE(success) << "Valid config files should be parsed successfully";
-  EXPECT_EQ(2, out_config.statements_.size());
-  EXPECT_EQ(3, out_config.statements_[1]->child_block_->statements_.size());
-}
-
 TEST_F(NginxStringConfigTest, ValidSimpleStatement) {
     EXPECT_TRUE(ParseString("foo bar;")); 
     EXPECT_EQ(1, out_config_.statements_.size()) << "Config has one statement"; 
