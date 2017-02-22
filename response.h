@@ -2,7 +2,7 @@
 #define RESPONSE_H
 
 #include <string>
-#include "request_handler.h"
+#include <vector>
 
 class Response {
   public:
@@ -20,12 +20,10 @@ class Response {
     void SetBody(const std::string& body);
     std::string ToString();
 
-    using Headers = std::vector<std::pair<std::string, std::string>>;
-
   private:
     ResponseCode status_;
     std::string response_body_;
-    Headers headers_container_;
+    std::vector<std::pair<std::string, std::string>> headers_container_;
     
     //Helper function
     std::string getTextForEnum( int enumVal );
