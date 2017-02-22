@@ -9,6 +9,8 @@ const int MAX_LENGTH = 1024;
 const std::string PORT = "port"; 
 const std::string PATH = "path"; 
 const std::string ROOT = "root"; 
+const std::string CRLF = "\r\n"; 
+const std::string NAME_VALUE_SEPARATOR = ": ";
 
 // SERVER:
 const std::string DEFAULT_REQUEST = "/";
