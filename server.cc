@@ -75,13 +75,17 @@ void Server::listen() {
       parsed_request->print_contents();
 
       // Route request:
-      // Attempt to find handler based on path (this is for requests specifying a file) 
-      std::shared_ptr<RequestHandler> handler = server_config_->get_handler(parsed_request->path()); 
+      // Attempt to find the longest matching prefix
+      // We are calling by path() in anticipation for serving a file      
+      std::string longest_prefix = server_config_->find_longest_matching_prefix(parsed_request->path()); 
+      BOOST_LOG_TRIVIAL(info) << "Longest matching prefix:" << longest_prefix;
+
+      std::shared_ptr<RequestHandler> handler = server_config_->get_handler(longest_prefix); 
       if (handler == nullptr) {
-        // Attempt to call by uri() instead (this is for requests not specifying a file)
+        // Attempt to call by uri() instead (this is for requests one level deep - ie /status, /echo
         handler = server_config_->get_handler(parsed_request->uri()); 
 
-        // Neither attempts worked, no handler found
+        // If that still fails, handler does not exist
         if (handler == nullptr) {
           BOOST_LOG_TRIVIAL(warning) << "Handler not found. Ignoring request";
           continue;
