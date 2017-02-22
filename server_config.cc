@@ -130,7 +130,7 @@ bool ServerConfig::build_handlers() {
     }
   }
 
-  if (handler_map.size() == 0) {
+  if (handler_map_.size() == 0) {
     return false; 
   }
   

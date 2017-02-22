@@ -5,6 +5,7 @@
 
 // CONFIG: 
 const int MAX_PORT_NUM = 65535;
+const int MAX_LENGTH = 1024;
 const std::string PORT = "port"; 
 const std::string PATH = "path"; 
 const std::string ROOT = "root"; 

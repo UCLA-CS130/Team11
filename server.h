@@ -15,11 +15,12 @@ public:
   Server(); 
   ~Server(); 
   bool init(const char* config_file);
+  void listen(); 
 
 private: 
   boost::asio::io_service io_service_;
   tcp::acceptor acceptor_;
-  ServerConfig* server_config; 
+  ServerConfig* server_config_; 
 
   void init_acceptor();
 };
