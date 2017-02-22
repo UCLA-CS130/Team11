@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = $(OPTIMIZE) -std=c++11 -g -Wall -DBOOST_LOG_DYN_LINK
 TCFLAGS = --coverage
 LIBFLAGS =  -lboost_system -lboost_filesystem -lboost_log -lpthread
-SRC = config_parser.cc serve_main.cc server.cc request_handler.cc server_config.cc
+SRC = config_parser.cc serve_main.cc server.cc request_handler.cc server_config.cc request.cc
 GTEST_DIR=googletest/googletest
 GMOCK_DIR=googletest/googlemock
 TARGET= serve
