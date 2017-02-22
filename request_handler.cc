@@ -94,3 +94,21 @@ RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Resp
 
   return OK; 
 }
+
+RequestHandler::Status Handler404::Init(const std::string& uri_prefix, const NginxConfig& config) {
+  //uri_ = uri_prefix; 
+  //config_ = config;
+  //fix
+  return OK;
+}
+
+RequestHandler::Status Handler404::HandleRequest(const Request& request, Response* response) {
+
+  std::string body = "<html><body><h1>404 Not Found</h1></body></html>"; 
+  response->SetStatus(response->ResponseCode::NOT_FOUND);
+  response->AddHeader("Content-Type", "text/plain");
+  response->SetBody(body);
+
+
+  return OK;
+}
