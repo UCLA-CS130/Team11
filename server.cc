@@ -1,5 +1,8 @@
+#include "request_handler.h"
+#include "status_count.h"
 #include "server.h"
 #include "http_constants.h"
+#include <vector>
 
 Server::Server() : acceptor_(io_service_), server_config_(nullptr) {}
 
@@ -96,7 +99,13 @@ void Server::listen() {
       Response resp; 
       RequestHandler::Status request_status = handler->HandleRequest(*parsed_request, &resp); 
 
+      StatusCount::get_instance().request_count_++;
+      //StatusCount::get_instance().statuses_.push_back(std::make_pair(parsed_request->uri(),"status!"));
+
       if (request_status == RequestHandler::Status::OK) {
+        std::cout << "Handle request OK" << std::endl;
+        // StatusCount::get_instance().status_map_[parsed_request->uri()][Response::ResponseCode::OK]++;
+        
         std::string req_to_write = resp.ToString();
         boost::asio::write(socket, boost::asio::buffer(req_to_write.c_str(), req_to_write.size()));
       }
