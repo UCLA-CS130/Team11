@@ -36,6 +36,7 @@ public:
                                Response* response) = 0;
 
   static RequestHandler* CreateByName(const char* type);
+  //virtual std::string GetName() = 0;
   std::string uri() { return uri_;}
 
 protected:

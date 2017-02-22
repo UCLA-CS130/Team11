@@ -1,6 +1,5 @@
 #include "request_handler.h"
 #include "http_constants.h"
-#include "status_handler.h"
 #include "status_count.h"
 
 #include <sstream>
@@ -121,30 +120,24 @@ RequestHandler::Status StatusHandler::HandleRequest(const Request& request, Resp
 
   // Create Body
 
-  std::string body = "Total number of requests: " + std::to_string(StatusCount::get_instance().request_count_) + "\n\n";
+  std::string body = "<h4>Number of total requests: " + std::to_string(StatusCount::get_instance().request_count_);
 
-  // for(auto hand : StatusCount::get_instance().handler_map_) {
-  //   body += hand.first + " " + hand.second;
-  // }
-  // body += "\n\n";
+  body += "</h4>\n\n";
 
-  body += "Status Code: \n\n";
+  for(auto const &i : StatusCount::get_instance().handlers_map_) {
+    body += i.first + " " + i.second;
+  }
 
-  // for(auto it = StatusCount::get_instance().status_map_.begin(); it != StatusCount::get_instance().status_map_.end(); it++){
-  //   body += it->first + "\n";
-  //   for(auto sec = it->second.begin(); sec != it->second.end(); sec++){
-  //     body += "\t" + std::to_string(sec->first) + ": " + std::to_string(sec->second) + "\n";
-  //   }
-  //   body += "\n";
-  // }
+  body += "<h4>Status Codes: <h4>\n\n";
 
-  // for(auto stat : StatusCount::get_instance().status_map_) {
-  //   body += stat.first + "\n";
-  //   for(auto sec : stat.first) {
-  //     body += "\t" + std::to_string(sec.first) + ": " + std::to_string(sec.second) + "\n";
-  //   }
-  //   body += "\n";
-  // }
+  for(auto const &it : StatusCount::get_instance().statuses_map_){
+    body += "<h4>";
+    body += it.first;
+    for(auto const &j : it.second){
+      body += " " + std::to_string(j.first) + ": " + std::to_string(j.second) + "\n";
+    }
+    body += "</h4>"; 
+  }
 
   response->SetBody(body);
 
