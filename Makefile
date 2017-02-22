@@ -39,6 +39,7 @@ server_config_test:
 response_test:
 	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/response_test.cc $(SRC_DIR)/response.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o response_test
 
+# NOTE: config_parser_test must be executed first -- the command does the googletest setup neccessary for the later tests
 test: config_parser_test server_config_test response_test
 	./config_parser_test
 	./server_config_test
