@@ -34,6 +34,8 @@ std::unique_ptr<Request> Request::Parse(const std::string& raw_request) {
   
   std::unique_ptr<Request> parsed_request(new Request(raw_request));
 
+  parsed_request->raw_request_ = raw_request;
+
    // Extract request into lines:
   std::string request(raw_request); 
   std::vector<std::string> lines;
@@ -57,6 +59,24 @@ std::unique_ptr<Request> Request::Parse(const std::string& raw_request) {
   parsed_request->file_ = p.filename().string();
   std::string ext = p.extension().string();
   parsed_request->mime_type_ = extension_to_type(ext); 
+
+  // Handle headers and body
+  for(int i = 1; i < lines.size(); i++){
+    std::string header_name;
+    std::string header_value;
+
+    if(!lines[i].empty()){
+      std::size_t index = lines[i].find_first_of(":");
+
+      if(index != std::string::npos) {
+        header_name = lines[i].substr(0, index);
+        header_value = lines[i].substr(index+2, std::string::npos);
+      }
+      std::cout << "Header name: " << header_name << ", Header value: " << header_value << std::endl;
+      parsed_request->headers_.push_back(std::make_pair(header_name, header_value));
+
+    }
+  }
 
   return parsed_request;
 }
