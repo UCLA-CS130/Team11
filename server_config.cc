@@ -22,7 +22,7 @@ bool ServerConfig::parse_config(const char* arg)
 int ServerConfig::get_port() {
   std::string token;
   std::string value; 
-  for (int i = 0; i < config_->statements_.size(); i++) {
+  for (unsigned int i = 0; i < config_->statements_.size(); i++) {
     std::vector<std::string> token_list = config_->statements_[i]->tokens_; 
     if (token_list.size() < 2) {
       continue; 
@@ -71,7 +71,7 @@ std::string ServerConfig::handler_map_content() {
 }
 
 bool ServerConfig::build_handlers() {
-  for (int i = 0; i < config_->statements_.size(); i++) {
+  for (unsigned int i = 0; i < config_->statements_.size(); i++) {
     std::vector<std::string> token_list = config_->statements_[i]->tokens_;
     if (token_list.size() < 3) {
       continue; 

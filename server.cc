@@ -54,7 +54,7 @@ void Server::listen() {
       // Perform read
       char req_buffer[MAX_LENGTH];
       boost::system::error_code err;
-      size_t num_bytes = socket.read_some(boost::asio::buffer(req_buffer), err);
+      socket.read_some(boost::asio::buffer(req_buffer), err);
       if (err == boost::asio::error::eof) {
         break; 
       }

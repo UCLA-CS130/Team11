@@ -30,7 +30,7 @@ RequestHandler::Status EchoHandler::HandleRequest(const Request& request, Respon
 /** STATIC FILE HANDLER */
 RequestHandler::Status StaticHandler::Init(const std::string& uri_prefix, const NginxConfig& config) {
   uri_ = uri_prefix; 
-  for (int i = 0; i < config.statements_.size(); i++) {
+  for (unsigned int i = 0; i < config.statements_.size(); i++) {
     std::vector<std::string> token_list = config.statements_[i]->tokens_; 
     if (token_list.size() < 2) {
       BOOST_LOG_TRIVIAL(warning) << token_list[0] << " missing value. Ignoring statement"; 
