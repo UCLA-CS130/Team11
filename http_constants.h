@@ -36,7 +36,6 @@ const std::string HTTP_NOT_IMPLEMENTED = "501 Not Implemented";
 const std::string HTTP_FORBIDDEN = "403 Forbidden";
 
 // RESPONSE TEMPLATES:
-
 const std::string DEFAULT_RESPONSE = "<html><h1> Serve is running </h1></html";
 const std::string BAD_RESPONSE = "<html><h1> 400 Bad Request </h1></html";
 const std::string SERVER_ERROR_RESPONSE = "<html><h1> 500 Internal Server Error </h1></html";

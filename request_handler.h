@@ -7,6 +7,8 @@
 #include <string>
 #include <boost/log/trivial.hpp>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+
 
 #include "response.h"
 #include "config_parser.h"
@@ -17,7 +19,9 @@ public:
   enum Status {
     OK = 0,
     MISSING_ROOT = 1,
-    INVALID_PATH = 2
+    INVALID_PATH = 2,
+    INVALID_RESPONSE = 3,
+    FILE_NOT_FOUND = 4
     // Define your status codes here.
   };
 
@@ -36,7 +40,7 @@ public:
 
 protected:
   std::string uri_;
-  std::string root_; 
+  std::string root_;
 };
 
 // Registerer code taken from: https://github.com/jfarrell468/registerer
