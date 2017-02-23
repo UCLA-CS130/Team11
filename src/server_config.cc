@@ -74,88 +74,95 @@ bool ServerConfig::build_handlers() {
   for (unsigned int i = 0; i < config_->statements_.size(); i++) {
     std::vector<std::string> token_list = config_->statements_[i]->tokens_;
 
-    if (token_list.size() < 3) {
+    // Handle default handler: 
+    if (token_list.size() == 2) {
 
-      std::string token = token_list[0];
+      std::string t = token_list[0];
+      std::string v = token_list[1];
 
-      if(token_list.size() == 2 && token == "default"){
+      if(t == DEFAULT  && v == NOT_FOUND_HANDLER) {
 
-        auto req_handler = RequestHandler::CreateByName("NotFoundHandler"); 
+        std::unique_ptr<NginxConfig> tmp_config; 
+        auto req_handler = RequestHandler::CreateByName(v.c_str()); 
 
         if(req_handler != nullptr)
         {
-          std::unique_ptr<NginxConfig> h; 
-          req_handler->Init("", *h);
+          req_handler->Init("Default 404 Handler", *tmp_config);
+          std::shared_ptr<RequestHandler> tmp(req_handler);
+          handler_map_["404"] = tmp;
           BOOST_LOG_TRIVIAL(info) << "default handler successfully called"; 
-
         }
       }
-      continue; 
     }
+    else if (token_list.size() == 3) {
+      std::string token = token_list[0];
+      std::string uri = token_list[1]; 
+      std::string handler = token_list[2];
 
-    std::string token = token_list[0];
-    std::string uri = token_list[1]; 
-    std::string handler = token_list[2];
+      if(token == PATH)
+      {
 
-    if(token == PATH)
-    {
+        // Manage URI 
+        if(!well_formed_uri(uri)) {
+          BOOST_LOG_TRIVIAL(warning) << uri << " is not well formed. Ignoring path block.";
+          continue;  
+        }
 
-      // Manage URI 
-      if(!well_formed_uri(uri)) {
-        BOOST_LOG_TRIVIAL(warning) << uri << " is not well formed. Ignoring path block.";
-        continue;  
+        auto it = handler_map_.find(uri); 
+        // Check if same exact uri exists
+        if (it != handler_map_.end()) {
+          BOOST_LOG_TRIVIAL(warning) << uri << " exists already. Ignoring path block";
+          continue;
+        }
+        else {
+
+        }
+
+        // Pass in config block to handler
+        std::unique_ptr<NginxConfig> handler_config; 
+        if (!get_handler_config(config_->statements_[i], handler_config)) {
+          BOOST_LOG_TRIVIAL(warning) << handler << " is missing child config block {...}. Ignoring path block.";
+          continue;
+        }
+
+        auto req_handler = RequestHandler::CreateByName(handler.c_str()); 
+
+        // TODO: Incorporate the 'default NotFoundHandler{}'
+        if (req_handler == nullptr) {
+          BOOST_LOG_TRIVIAL(warning) << handler << " is not implemented. Ignoring path block.";
+          //NotFoundHandler
+          //RequestHandler::Status init = req_handler->Init(uri, *handler_config);
+
+          continue; 
+        }
+
+        RequestHandler::Status init = req_handler->Init(uri, *handler_config);
+        
+        if (init == RequestHandler::OK) {
+          BOOST_LOG_TRIVIAL(info) << "Init function successfully called"; 
+        }
+        else if (init == RequestHandler::MISSING_ROOT) {
+          BOOST_LOG_TRIVIAL(warning) << "StaticHandler missing root path. Ignoring path block";
+          continue; 
+        }
+        else if (init == RequestHandler::INVALID_PATH) {
+          BOOST_LOG_TRIVIAL(warning) << "StaticHandler path is invalid. Ignoring path block";
+          continue;
+        }
+
+        std::shared_ptr<RequestHandler> tmp(req_handler);
+        handler_map_[uri] = tmp;
       }
-
-      auto it = handler_map_.find(uri); 
-      // Check if same exact uri exists
-      if (it != handler_map_.end()) {
-        BOOST_LOG_TRIVIAL(warning) << uri << " exists already. Ignoring path block";
-        continue;
-      }
-      else {
-
-      }
-
-      // Pass in config block to handler
-      std::unique_ptr<NginxConfig> handler_config; 
-      if (!get_handler_config(config_->statements_[i], handler_config)) {
-        BOOST_LOG_TRIVIAL(warning) << handler << " is missing child config block {...}. Ignoring path block.";
-        continue;
-      }
-
-      auto req_handler = RequestHandler::CreateByName(handler.c_str()); 
-
-      // TODO: Incorporate the 'default NotFoundHandler{}'
-      if (req_handler == nullptr) {
-        BOOST_LOG_TRIVIAL(warning) << handler << " is not implemented. Ignoring path block.";
-        //NotFoundHandler
-        //RequestHandler::Status init = req_handler->Init(uri, *handler_config);
-
-        continue; 
-      }
-
-      RequestHandler::Status init = req_handler->Init(uri, *handler_config);
-      
-      if (init == RequestHandler::OK) {
-        BOOST_LOG_TRIVIAL(info) << "Init function successfully called"; 
-      }
-      else if (init == RequestHandler::MISSING_ROOT) {
-        BOOST_LOG_TRIVIAL(warning) << "StaticHandler missing root path. Ignoring path block";
-        continue; 
-      }
-      else if (init == RequestHandler::INVALID_PATH) {
-        BOOST_LOG_TRIVIAL(warning) << "StaticHandler path is invalid. Ignoring path block";
-        continue;
-      }
-
-      std::shared_ptr<RequestHandler> tmp(req_handler);
-      handler_map_[uri] = tmp;
-
     }
   }
 
   if (handler_map_.size() == 0) {
     return false; 
+  }
+
+  auto it = handler_map_.find("404"); 
+  if (it == handler_map_.end()) {
+    BOOST_LOG_TRIVIAL(warning) << "NotFoundHandler not defined, 404 requests will not be handled!";
   }
   
   BOOST_LOG_TRIVIAL(info) << "Handler map content: \n" << handler_map_content();

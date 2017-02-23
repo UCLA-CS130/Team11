@@ -96,7 +96,7 @@ RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Resp
 }
 
 RequestHandler::Status NotFoundHandler::Init(const std::string& uri_prefix, const NginxConfig& config) {
-  
+  uri_ = uri_prefix;
   return OK;
 }
 
@@ -107,7 +107,7 @@ RequestHandler::Status NotFoundHandler::HandleRequest(const Request& request, Re
   response->AddHeader("Content-Type", "text/plain");
   response->SetBody(body);
 
-  cout<< response->ToString() << endl;
+  BOOST_LOG_TRIVIAL(info) << response->ToString();
 
   return OK;
 }
