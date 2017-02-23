@@ -27,6 +27,9 @@ config_parser_test:
 # server_test:
 # $(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include server_test.cc server.cc server_config.cc config_parser.cc request_handler.cc response.cc request.cc${GMOCK_DIR}/src/gmock_main.cc libgtest.a libgmock.a $(LIBFLAGS) -o server_test
 
+server_test:
+	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -I${SRC_DIR} $(TEST_DIR)/server_test.cc $(SRC_DIR)/server.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc ${GMOCK_DIR}/src/gmock_main.cc libgtest.a libgmock.a $(LIBFLAGS) -o server_test
+
 request_handler_test:
 	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/request_handler_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o request_handler_test
 
@@ -46,9 +49,9 @@ status_count_test:
 	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/status_count_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o status_count_test
 
 # NOTE: config_parser_test must be executed first -- the command does the googletest setup neccessary for the later tests
-test: config_parser_test request_test
+test: config_parser_test server_test
 	./config_parser_test
-	./request_test
+	./server_test
 	python $(TEST_DIR)/integration_test.py
 
 clean: 

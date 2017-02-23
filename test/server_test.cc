@@ -8,7 +8,6 @@
 #include "server.h"
 #include "server_config.h"
 
-/* TODO: Redo test with common api
 class MockServerConfig : public ServerConfig {
 public:
   MOCK_METHOD1(parse_config, bool(const char* arg));
@@ -25,14 +24,13 @@ protected:
   std::size_t request_buffer_size = 0;
 };
 
-
 TEST(ServerInitTest, NullServerConfig) {
   Server s;
   const char* config_file = "";
-  s.server_config = nullptr;
   ASSERT_FALSE(s.init(config_file));  
 }
 
+/*
 TEST(ServerInitTest, ServerConfigError) { 
   MockServerConfig m;
   Server s;

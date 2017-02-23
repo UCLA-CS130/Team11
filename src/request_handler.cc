@@ -110,15 +110,13 @@ std::string StaticHandler::GetName() {
 
 RequestHandler::Status StatusHandler::Init(const std::string& uri_prefix, const NginxConfig& config){
   uri_ = uri_prefix;
-  std::cout << "Called status handler Init" << std::endl;
+  BOOST_LOG_TRIVIAL(info) << "Called status handler Init";
   return RequestHandler::Status::OK;
 }
 
 RequestHandler::Status StatusHandler::HandleRequest(const Request& request, Response* response) {
 
-  std::cout << "Called status handler handle request" << std::endl;
-  
-  // // TODO: finish implementing
+  BOOST_LOG_TRIVIAL(info) << "Called status handler handle request";
 
   // get uri to handler map
   // server config has this map
