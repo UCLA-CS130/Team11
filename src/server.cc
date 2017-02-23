@@ -1,8 +1,5 @@
-#include "request_handler.h"
-#include "status_count.h"
 #include "server.h"
 #include "http_constants.h"
-#include <vector>
 
 Server::Server() : acceptor_(io_service_), server_config_(nullptr) {}
 
@@ -112,8 +109,6 @@ void Server::listen() {
       }
       else {
         BOOST_LOG_TRIVIAL(warning) << "Error with handling request"; 
-
-        //resp.SetStatus(request_status);
 
         // TODO: Change to output more than just 404 responses, get rid of hardcoding
 
