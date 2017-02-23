@@ -100,7 +100,7 @@ void Server::listen() {
       RequestHandler::Status request_status = handler->HandleRequest(*parsed_request, &resp); 
 
       // TODO: finish implementing
-      StatusCount::get_instance().handlers_map_[handler->GetName()] = parsed_request->uri();
+      //StatusCount::get_instance().handlers_map_[handler->GetName()] = parsed_request->uri();
 
       StatusCount::get_instance().request_count_++;
       if (request_status == RequestHandler::Status::OK) {
@@ -111,9 +111,11 @@ void Server::listen() {
         
         std::string req_to_write = resp.ToString();
         boost::asio::write(socket, boost::asio::buffer(req_to_write.c_str(), req_to_write.size()));
+        StatusCount::get_instance().handlers_map_[parsed_request->uri()] = handler->GetName();
       }
       else {
         BOOST_LOG_TRIVIAL(warning) << "Error with handling request"; 
+        StatusCount::get_instance().handlers_map_[parsed_request->uri()] = "-> Failed, Sent to NotFoundHandler";
         // TODO: If request_status is not OK, evoke a different handler ie 404 
         // We should probably make this a series of if statements due to the specific nature of some
         // of the statuses 

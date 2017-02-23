@@ -26,12 +26,8 @@ TEST(RequestHandlerTest, EchoTest)
 
 	EchoHandler echo_handler;
 	NginxConfig config;
-	// MockRequest request;
-	// Response response;
 
 	EXPECT_EQ(RequestHandler::Status::OK, echo_handler.Init(echo_uri,config));
-
-	// EXPECT_EQ(RequestHandler::Status::OK, echo_handler.HandleRequest(request,&response));
 }
 
 // TEST(RequestHandlerTest, StaticTest)
