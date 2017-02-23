@@ -39,11 +39,14 @@ server_config_test:
 response_test:
 	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/response_test.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/response.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o response_test
 
+status_count_test:
+	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/status_count_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o status_count_test
+
 # NOTE: config_parser_test must be executed first -- the command does the googletest setup neccessary for the later tests
-test: config_parser_test request_handler_test
+test: config_parser_test status_count_test
 	./config_parser_test
-	./request_handler_test
+	./status_count_test
 	python $(TEST_DIR)/integration_test.py
 
 clean: 
-	rm -f $(TARGET) *.o *.a request_handler_test config_parser_test server_test server_config_test response_test *.gcno *.gcda
+	rm -f $(TARGET) *.o *.a request_handler_test config_parser_test server_test server_config_test response_test status_count_test *.gcno *.gcda
