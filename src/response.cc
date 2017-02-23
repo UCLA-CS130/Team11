@@ -36,6 +36,27 @@ std::string Response::ToString()
   return response_header; 
 }
 
+// returns status for status handler
+int Response::GetStatus()
+{
+  switch(status_)
+  {
+    case ResponseCode::OK:
+      return 200;
+    case ResponseCode::INTERNAL_SERVER_ERROR:
+      return 500;
+    case ResponseCode::BAD_REQUEST:
+      return 400;
+    case ResponseCode::FORBIDDEN:
+      return 403;
+    case ResponseCode::NOT_FOUND:
+      return 404;
+
+    default:
+      return -1;
+  }
+}
+
 //helper function
 std::string Response::getTextForEnum( int enumVal )
 {

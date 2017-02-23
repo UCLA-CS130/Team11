@@ -52,7 +52,7 @@ std::unique_ptr<Request> Request::Parse(const std::string& raw_request) {
   parsed_request->method_ = reqs[0];
   parsed_request->URI_ = reqs[1];
   parsed_request->version_ = reqs[2];
-
+  
   // Extract file and path:
   boost::filesystem::path p(parsed_request->URI_);
   parsed_request->path_ = p.parent_path().string(); 

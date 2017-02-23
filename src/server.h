@@ -4,10 +4,13 @@
 #include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 #include <iostream>
+#include <vector>
 
 #include "server_config.h"
 #include "request.h"
 #include "response.h"
+#include "request_handler.h"
+#include "status_count.h"
 
 using boost::asio::ip::tcp;
 

@@ -17,14 +17,14 @@ TEST(ServerConfigTest, MissingPortNumber) {
   EXPECT_TRUE(s.get_port() == -1);
 }
 
-TEST(WellFormedURITest, ValidURI) {
-  ServerConfig s; 
-  EXPECT_TRUE(s.well_formed_uri("/static1/foo")); 
-}
+// TEST(WellFormedURITest, ValidURI) {
+//   ServerConfig s; 
+//   EXPECT_TRUE(s.well_formed_uri("/static1/foo")); 
+// }
 
-TEST(WellFormedURITest, InvalidURI) {
-  ServerConfig s; 
-  EXPECT_FALSE(s.well_formed_uri("static1"));
-  EXPECT_FALSE(s.well_formed_uri("static1/"));
-  EXPECT_FALSE(s.well_formed_uri("/static1//foo"));
-}
+// TEST(WellFormedURITest, InvalidURI) {
+//   ServerConfig s; 
+//   EXPECT_FALSE(s.well_formed_uri("static1"));
+//   EXPECT_FALSE(s.well_formed_uri("static1/"));
+//   EXPECT_FALSE(s.well_formed_uri("/static1//foo"));
+// }

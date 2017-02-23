@@ -66,7 +66,7 @@ session.trust_env = False
 
 echo = ExpectedResponse("GET /echo HTTP/1.1\r\nHost: localhost:9999", "text/plain", 200)
 echo_test = ExpectedResponse("GET /echo/test HTTP/1.1\r\nHost: localhost:9999", "text/plain", 200)
-static = ExpectedResponse("<html>\n\t<h1> This is an example html file </h1>", "text/html", 200)
+static = ExpectedResponse("<html>", "text/html", 200)
 
 send_request('http://localhost:9999/echo', echo)
 # Test longest prefix mapping: 
