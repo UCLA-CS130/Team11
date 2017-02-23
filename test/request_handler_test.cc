@@ -8,8 +8,6 @@
 #include "config_parser.h"
 #include "request.h"
 
-using boost::asio::ip::tcp;
-
 TEST(RequestHandlerTest, EchoTest)
 {
 	const std::string echo_uri = "/echo";
