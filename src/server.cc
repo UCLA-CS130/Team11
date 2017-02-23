@@ -99,9 +99,6 @@ void Server::listen() {
       Response resp; 
       RequestHandler::Status request_status = handler->HandleRequest(*parsed_request, &resp); 
 
-      // TODO: finish implementing
-      //StatusCount::get_instance().handlers_map_[handler->GetName()] = parsed_request->uri();
-
       StatusCount::get_instance().request_count_++;
       if (request_status == RequestHandler::Status::OK) {
         std::cout << "Handle request OK" << std::endl;
@@ -115,7 +112,14 @@ void Server::listen() {
       }
       else {
         BOOST_LOG_TRIVIAL(warning) << "Error with handling request"; 
+
+        //resp.SetStatus(request_status);
+
+        // TODO: Change to output more than just 404 responses, get rid of hardcoding
+
+        StatusCount::get_instance().statuses_map_[parsed_request->uri()][404]++;
         StatusCount::get_instance().handlers_map_[parsed_request->uri()] = "-> Failed, Sent to NotFoundHandler";
+        
         // TODO: If request_status is not OK, evoke a different handler ie 404 
         // We should probably make this a series of if statements due to the specific nature of some
         // of the statuses 
