@@ -1,8 +1,5 @@
 #define TEST_REQUEST_HANDLER
 
-#include <boost/asio.hpp>
-#include <boost/algorithm/string.hpp>
-#include <boost/filesystem.hpp>
 #include "gtest/gtest.h"
 #include "server.h"
 #include "request_handler.h"
