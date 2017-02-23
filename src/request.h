@@ -28,7 +28,7 @@ public:
   std::string mime_type() const { return mime_type_; }
 
   using Headers = std::vector<std::pair<std::string, std::string>>;
-  Headers headers() const;
+  Headers headers() const { return headers_; }
 
   // [TODO] Parse body of request
   // std::string body() const;
@@ -39,6 +39,7 @@ private:
   void build_map();
   std::string extension_to_type(std::string ext);
 
+  std::vector<std::pair<std::string, std::string>> headers_;
   std::map<std::string, std::string> mime_map_;
   std::string raw_request_;
   std::string method_; 

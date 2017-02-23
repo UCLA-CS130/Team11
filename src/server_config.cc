@@ -22,7 +22,7 @@ bool ServerConfig::parse_config(const char* arg)
 int ServerConfig::get_port() {
   std::string token;
   std::string value; 
-  for (int i = 0; i < config_->statements_.size(); i++) {
+  for (unsigned int i = 0; i < config_->statements_.size(); i++) {
     std::vector<std::string> token_list = config_->statements_[i]->tokens_; 
     if (token_list.size() < 2) {
       continue; 
@@ -71,7 +71,7 @@ std::string ServerConfig::handler_map_content() {
 }
 
 bool ServerConfig::build_handlers() {
-  for (int i = 0; i < config_->statements_.size(); i++) {
+  for (unsigned int i = 0; i < config_->statements_.size(); i++) {
     std::vector<std::string> token_list = config_->statements_[i]->tokens_;
 
     if (token_list.size() < 3) {
@@ -107,14 +107,13 @@ bool ServerConfig::build_handlers() {
       }
 
       auto it = handler_map_.find(uri); 
-      // TODO: Do longest matching prefix check here
-      // If /static1/foo exists already and we are attempting to add
-      // /static1 to the map, we will state that /static1 exists already
-      // because /static1/foo is the longest matching prefix
-      
+      // Check if same exact uri exists
       if (it != handler_map_.end()) {
         BOOST_LOG_TRIVIAL(warning) << uri << " exists already. Ignoring path block";
         continue;
+      }
+      else {
+
       }
 
       // Pass in config block to handler
@@ -163,8 +162,23 @@ bool ServerConfig::build_handlers() {
   return true;
 }
 
+std::string ServerConfig::find_longest_matching_prefix(std::string uri) {
+  std::string prefix = uri;  
+  while (prefix != "") {
+    auto it = handler_map_.find(prefix); 
+    // We found an exact match!
+    if (it != handler_map_.end()) {
+      return prefix; 
+    }
+    // Find next path
+    boost::filesystem::path p(prefix);
+    prefix = p.parent_path().string(); 
+  }
 
+  return "";
+}
 
+// Return exact match 
 std::shared_ptr<RequestHandler> ServerConfig::get_handler(std::string uri) {
   auto it = handler_map_.find(uri);
   if (it != handler_map_.end()) {

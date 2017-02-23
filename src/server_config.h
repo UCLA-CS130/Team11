@@ -12,6 +12,7 @@
 #include <string>
 #include <memory>
 #include <boost/log/trivial.hpp>
+#include <boost/filesystem.hpp>
 
 #include "config_parser.h"
 #include "request_handler.h"
@@ -26,6 +27,7 @@ public:
   int get_port();
   std::string handler_map_content();
   std::shared_ptr<RequestHandler> get_handler(std::string uri); 
+  std::string find_longest_matching_prefix(std::string uri);
 
 
 private: 
