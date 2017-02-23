@@ -30,6 +30,10 @@ RequestHandler::Status EchoHandler::HandleRequest(const Request& request, Respon
   return OK; 
 }
 
+std::string EchoHandler::GetName() {
+  return "EchoHandler";
+}
+
 /** STATIC FILE HANDLER */
 RequestHandler::Status StaticHandler::Init(const std::string& uri_prefix, const NginxConfig& config) {
   uri_ = uri_prefix; 
@@ -98,6 +102,10 @@ RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Resp
   return OK; 
 }
 
+std::string StaticHandler::GetName() {
+  return "StaticHandler";
+}
+
 /* STATUS HANDLER */
 
 RequestHandler::Status StatusHandler::Init(const std::string& uri_prefix, const NginxConfig& config){
@@ -124,22 +132,28 @@ RequestHandler::Status StatusHandler::HandleRequest(const Request& request, Resp
 
   body += "</h4>\n\n";
 
+  body += "<h4>Request Handlers in use: </h4>";
+
   for(auto const &i : StatusCount::get_instance().handlers_map_) {
-    body += i.first + " " + i.second;
+    body += "<h5>" + i.first + " " + i.second + "</h5>";
   }
 
   body += "<h4>Status Codes: <h4>\n\n";
 
   for(auto const &it : StatusCount::get_instance().statuses_map_){
-    body += "<h4>";
+    body += "<h5>";
     body += it.first;
     for(auto const &j : it.second){
       body += " " + std::to_string(j.first) + ": " + std::to_string(j.second) + "\n";
     }
-    body += "</h4>"; 
+    body += "</h5>"; 
   }
 
   response->SetBody(body);
 
   return RequestHandler::Status::OK;
+}
+
+std::string StatusHandler::GetName() {
+  return "StatusHandler";
 }

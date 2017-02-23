@@ -100,7 +100,7 @@ void Server::listen() {
       RequestHandler::Status request_status = handler->HandleRequest(*parsed_request, &resp); 
 
       // TODO: finish implementing
-      // StatusCount::get_instance().handlers_map_[];
+      StatusCount::get_instance().handlers_map_[handler->GetName()] = parsed_request->uri();
 
       StatusCount::get_instance().request_count_++;
       if (request_status == RequestHandler::Status::OK) {
