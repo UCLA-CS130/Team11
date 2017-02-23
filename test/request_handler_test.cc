@@ -4,11 +4,40 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include "gtest/gtest.h"
+// #include "gmock/gmock.h"
 #include "server.h"
 #include "request_handler.h"
 #include "http_constants.h"
+#include "config_parser.h"
+#include "request.h"
 
 using boost::asio::ip::tcp;
+
+// TODO: use a mock for Request
+
+// class MockRequest : public Request {
+//   public:
+// 	MOCK_CONST_METHOD0(raw_request, std::string());
+// };
+
+TEST(RequestHandlerTest, EchoTest)
+{
+	const std::string echo_uri = "/echo";
+
+	EchoHandler echo_handler;
+	NginxConfig config;
+	// MockRequest request;
+	// Response response;
+
+	EXPECT_EQ(RequestHandler::Status::OK, echo_handler.Init(echo_uri,config));
+
+	// EXPECT_EQ(RequestHandler::Status::OK, echo_handler.HandleRequest(request,&response));
+}
+
+// TEST(RequestHandlerTest, StaticTest)
+// {
+
+// }
 
 // Test Fixture
 /* TODO: Redo tests with common API
