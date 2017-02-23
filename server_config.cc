@@ -84,8 +84,10 @@ bool ServerConfig::build_handlers() {
 
         if(req_handler != nullptr)
         {
-          std::unique_ptr<NginxConfig> handler_config; 
-          req_handler->Init("", *handler_config);
+          std::unique_ptr<NginxConfig> h; 
+          req_handler->Init("", *h);
+          BOOST_LOG_TRIVIAL(info) << "default handler successfully called"; 
+
         }
       }
       continue; 
