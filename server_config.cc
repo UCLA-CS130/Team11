@@ -73,7 +73,20 @@ std::string ServerConfig::handler_map_content() {
 bool ServerConfig::build_handlers() {
   for (int i = 0; i < config_->statements_.size(); i++) {
     std::vector<std::string> token_list = config_->statements_[i]->tokens_;
+    
     if (token_list.size() < 3) {
+
+      std::string token = token_list[0];
+
+      if(token_list.size() == 2 && token == "default"){
+
+        auto req_handler = RequestHandler::CreateByName("NotFoundHandler"); 
+
+        if(req_handler != nullptr)
+        {
+          req_handler->Init(uri, *handler_config);
+        }
+      }
       continue; 
     }
 
@@ -81,7 +94,8 @@ bool ServerConfig::build_handlers() {
     std::string uri = token_list[1]; 
     std::string handler = token_list[2];
 
-    if (token == PATH) {
+    if(token == PATH)
+    {
 
       // Manage URI 
       if(!well_formed_uri(uri)) {
@@ -113,7 +127,7 @@ bool ServerConfig::build_handlers() {
       if (req_handler == nullptr) {
         BOOST_LOG_TRIVIAL(warning) << handler << " is not implemented. Ignoring path block.";
         //NotFoundHandler
-        RequestHandler::Status init = req_handler->Init(uri, *handler_config);
+        //RequestHandler::Status init = req_handler->Init(uri, *handler_config);
 
         continue; 
       }
@@ -145,6 +159,8 @@ bool ServerConfig::build_handlers() {
   BOOST_LOG_TRIVIAL(info) << "Handler map content: \n" << handler_map_content();
   return true;
 }
+
+
 
 std::shared_ptr<RequestHandler> ServerConfig::get_handler(std::string uri) {
   auto it = handler_map_.find(uri);
