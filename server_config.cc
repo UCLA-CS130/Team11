@@ -73,7 +73,7 @@ std::string ServerConfig::handler_map_content() {
 bool ServerConfig::build_handlers() {
   for (int i = 0; i < config_->statements_.size(); i++) {
     std::vector<std::string> token_list = config_->statements_[i]->tokens_;
-    
+
     if (token_list.size() < 3) {
 
       std::string token = token_list[0];
@@ -84,7 +84,8 @@ bool ServerConfig::build_handlers() {
 
         if(req_handler != nullptr)
         {
-          req_handler->Init(uri, *handler_config);
+          std::unique_ptr<NginxConfig> handler_config; 
+          req_handler->Init("", *handler_config);
         }
       }
       continue; 
