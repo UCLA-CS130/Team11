@@ -18,6 +18,7 @@ class Response {
     Response() : response_body_("") {}
     void SetStatus(const ResponseCode response_code);
     void AddHeader(const std::string& header_name, const std::string& header_value);
+    void ClearHeaders(); 
     void SetBody(const std::string& body);
     std::string ToString();
 

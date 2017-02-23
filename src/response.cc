@@ -18,6 +18,10 @@ void Response::AddHeader(const std::string& header_name, const std::string& head
   headers_container_.push_back(header);
 }
 
+void Response::ClearHeaders() {
+  headers_container_.erase(headers_container_.begin(), headers_container_.end());
+}
+
 std::string Response::ToString()
 {
   std::string response_header = "";

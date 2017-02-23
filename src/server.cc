@@ -87,8 +87,8 @@ void Server::listen() {
 
         // If that still fails, handler does not exist
         if (handler == nullptr) {
-          BOOST_LOG_TRIVIAL(warning) << "Handler not found. Ignoring request";
-          continue;
+          BOOST_LOG_TRIVIAL(warning) << "Handler not found. Calling NotFoundHandler";
+          handler = server_config_->get_handler("404");
         }
       }
 
@@ -102,12 +102,15 @@ void Server::listen() {
       }
       else {
         BOOST_LOG_TRIVIAL(warning) << "Error with handling request"; 
-        // TODO: If request_status is not OK, evoke a different handler ie 404 
+        // TODO:
         // We should probably make this a series of if statements due to the specific nature of some
         // of the statuses 
+        handler = server_config_->get_handler("404");
+        request_status = handler->HandleRequest(*parsed_request, &resp); 
+        std::string req_to_write = resp.ToString();
+        std::cout << "The response being written:\n" << req_buffer << std::endl;
+        boost::asio::write(socket, boost::asio::buffer(req_to_write.c_str(), req_to_write.size()));
         
-        // By default, resp is set with a response code of OK, we should update to the correct response
-        // code here 
       }
       
  

@@ -104,7 +104,8 @@ RequestHandler::Status NotFoundHandler::HandleRequest(const Request& request, Re
 
   std::string body = "<html><body><h1>404 Not Found</h1></body></html>"; 
   response->SetStatus(response->ResponseCode::NOT_FOUND);
-  response->AddHeader("Content-Type", "text/plain");
+  response->ClearHeaders();
+  response->AddHeader("Content-Type", "text/html");
   response->SetBody(body);
 
   BOOST_LOG_TRIVIAL(info) << response->ToString();

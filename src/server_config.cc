@@ -162,7 +162,7 @@ bool ServerConfig::build_handlers() {
 
   auto it = handler_map_.find("404"); 
   if (it == handler_map_.end()) {
-    BOOST_LOG_TRIVIAL(warning) << "NotFoundHandler not defined, 404 requests will not be handled!";
+    BOOST_LOG_TRIVIAL(fatal) << "NotFoundHandler not defined, 404 requests will not be handled!";
   }
   
   BOOST_LOG_TRIVIAL(info) << "Handler map content: \n" << handler_map_content();
