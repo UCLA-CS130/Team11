@@ -105,9 +105,11 @@ void Server::listen() {
         // TODO:
         // We should probably make this a series of if statements due to the specific nature of some
         // of the statuses 
+        
+        Response resp404; 
         handler = server_config_->get_handler("404");
-        request_status = handler->HandleRequest(*parsed_request, &resp); 
-        std::string req_to_write = resp.ToString();
+        request_status = handler->HandleRequest(*parsed_request, &resp404); 
+        std::string req_to_write = resp404.ToString();
         std::cout << "The response being written:\n" << req_buffer << std::endl;
         boost::asio::write(socket, boost::asio::buffer(req_to_write.c_str(), req_to_write.size()));
         

@@ -2,9 +2,6 @@
 #include "response.h"
 
 TEST(FirstTest, ToString) {
- // EXPECT_TRUE(success) << "Valid config files should be parsed successfully";
-  //EXPECT_EQ(2, out_config.statements_.size());
-  //EXPECT_EQ(3, out_config.statements_[1]->child_block_->statements_.size());
 	Response r;
 	r.SetStatus(Response::ResponseCode::OK);
 	r.AddHeader("dog", "is cool");
@@ -37,9 +34,6 @@ TEST(SecondTest, AnotherToString) {
   r2.SetBody("i hope this works");
 	
   EXPECT_EQ(response_from_400, r2.ToString());
-
-   //EXPECT_EQ(response_from_400, r2.ToString());
-
 
 
 }
