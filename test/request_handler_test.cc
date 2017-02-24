@@ -33,3 +33,19 @@ TEST(EchoHandleRequest, ValidHandleRequest) {
 	EXPECT_EQ(status, RequestHandler::Status::OK); 
 }
 
+TEST(NotFoundRequest, NotFound)
+{
+	NotFoundHandler nf;
+	Request req("dummy request");
+	Response resp;
+	RequestHandler::Status status = nf.HandleRequest(req, &resp);
+
+	std::string format = "Content-Type: text/html\r\n\r\n";
+	std::string response = "HTTP/1.1 404 Not Found\r\n";
+	std::string body = "<html><body><h1>404 Not Found</h1></body></html>";
+
+	std::string result = response + format + body;
+
+	EXPECT_EQ(status, RequestHandler::Status::OK);
+	EXPECT_EQ(result, resp.ToString());
+}
