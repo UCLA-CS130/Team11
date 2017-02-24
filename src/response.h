@@ -20,6 +20,7 @@ class Response {
     void AddHeader(const std::string& header_name, const std::string& header_value);
     void ClearHeaders(); 
     void SetBody(const std::string& body);
+    int GetStatus();
     std::string ToString();
 
   private:

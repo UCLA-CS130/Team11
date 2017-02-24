@@ -69,6 +69,7 @@ echo_test = ExpectedResponse("GET /echo/test HTTP/1.1\r\nHost: localhost:9999", 
 static = ExpectedResponse("<html>", "text/html", 200)
 bad = ExpectedResponse("<html><body><h1>404 Not Found</h1></body></html>", "text/html", 404)
 
+
 send_request('http://localhost:9999/echo', echo)
 # Test longest prefix mapping: 
 send_request('http://localhost:9999/echo/test', echo_test)

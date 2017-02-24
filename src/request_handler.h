@@ -36,6 +36,7 @@ public:
                                Response* response) = 0;
 
   static RequestHandler* CreateByName(const char* type);
+  virtual std::string GetName() = 0;
   std::string uri() { return uri_;}
 
 protected:
@@ -68,6 +69,7 @@ class EchoHandler : public RequestHandler {
  public:
   virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
   virtual Status HandleRequest(const Request& request, Response* response);
+  virtual std::string GetName();
 };
 
 REGISTER_REQUEST_HANDLER(EchoHandler);
@@ -76,6 +78,7 @@ class StaticHandler : public RequestHandler {
  public:
   virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
   virtual Status HandleRequest(const Request& request, Response* response);
+  virtual std::string GetName();
 };
 
 REGISTER_REQUEST_HANDLER(StaticHandler);
@@ -89,5 +92,13 @@ public:
 
 REGISTER_REQUEST_HANDLER(NotFoundHandler);
 
+class StatusHandler : public RequestHandler {
+  public:
+  virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
+  virtual Status HandleRequest(const Request& request, Response* response);
+  virtual std::string GetName();
+};
+
+REGISTER_REQUEST_HANDLER(StatusHandler);
 
 #endif  // REQUEST_HANDLER_H

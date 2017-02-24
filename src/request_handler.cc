@@ -1,5 +1,8 @@
 #include "request_handler.h"
 #include "http_constants.h"
+#include "status_count.h"
+
+#include <sstream>
 
 std::map<std::string, RequestHandler* (*)(void)>* request_handler_builders = nullptr;
 
@@ -25,6 +28,10 @@ RequestHandler::Status EchoHandler::HandleRequest(const Request& request, Respon
   response->AddHeader(CONTENT_TYPE, request.mime_type()); 
   response->SetBody(request.raw_request());
   return OK; 
+}
+
+std::string EchoHandler::GetName() {
+  return "EchoHandler";
 }
 
 /** STATIC FILE HANDLER */
@@ -111,4 +118,57 @@ RequestHandler::Status NotFoundHandler::HandleRequest(const Request& request, Re
   BOOST_LOG_TRIVIAL(info) << response->ToString();
 
   return OK;
+  
+std::string StaticHandler::GetName() {
+  return "StaticHandler";
+}
+
+/* STATUS HANDLER */
+
+RequestHandler::Status StatusHandler::Init(const std::string& uri_prefix, const NginxConfig& config){
+  uri_ = uri_prefix;
+  BOOST_LOG_TRIVIAL(info) << "Called status handler Init";
+  return RequestHandler::Status::OK;
+}
+
+RequestHandler::Status StatusHandler::HandleRequest(const Request& request, Response* response) {
+
+  BOOST_LOG_TRIVIAL(info) << "Called status handler handle request";
+
+  // get uri to handler map
+  // server config has this map
+
+  response->SetStatus(Response::ResponseCode::OK);
+  response->AddHeader(CONTENT_TYPE, HTML);
+
+  // Create Body
+
+  std::string body = "<h4>Number of total requests: " + std::to_string(StatusCount::get_instance().request_count_);
+
+  body += "</h4>\n\n";
+
+  body += "<h4>Request Handlers in use: </h4>";
+
+  for(auto const &i : StatusCount::get_instance().handlers_map_) {
+    body += "<h5>" + i.first + " " + i.second + "</h5>";
+  }
+
+  body += "<h4>Status Codes: <h4>\n\n";
+
+  for(auto const &it : StatusCount::get_instance().statuses_map_){
+    body += "<h5>";
+    body += it.first;
+    for(auto const &j : it.second){
+      body += " " + std::to_string(j.first) + ": " + std::to_string(j.second) + "\n";
+    }
+    body += "</h5>"; 
+  }
+
+  response->SetBody(body);
+
+  return RequestHandler::Status::OK;
+}
+
+std::string StatusHandler::GetName() {
+  return "StatusHandler";
 }
