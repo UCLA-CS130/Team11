@@ -1,0 +1,20 @@
+# This is a comment.
+
+port 9999;  # This is also a comment.
+
+path /static1 StaticHandler {
+  root example_dir;
+}
+
+path /badPath StaticHandler {
+  root non_existent_path; 
+}
+
+path /missingRoot StaticHandler {
+ meaningless_token;
+}
+
+path /echo EchoHandler {}
+
+# Default response handler if no handlers match.
+default NotFoundHandler {}

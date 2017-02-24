@@ -1,0 +1,26 @@
+ # This is a comment.
+
+port 9999;  # This is also a comment.
+
+path /static1 StaticHandler {
+  root example_dir;
+}
+
+path /static2 StaticHandler {
+	root example_dir_2; 
+}
+
+# Multiple echo handlers to demonstrate longest prefix matching: 
+# If a request is made to /echo/test => /echo EchoHandler is still called
+path /echo EchoHandler {}
+
+path /status StatusHandler {}
+
+path /echo/foo EchoHandler {}
+
+path /echo/foo/bar EchoHandler {}
+
+
+# Default response handler if no handlers match.
+default NotFoundHandler {}
+

@@ -17,7 +17,7 @@
 
 #include "config_parser.h"
 
-std::string NginxConfig::ToString(int depth) {
+std::string NginxConfig::ToString(int depth) const {
   std::string serialized_config;
   for (const auto& statement : statements_) {
     serialized_config.append(statement->ToString(depth));
@@ -25,7 +25,7 @@ std::string NginxConfig::ToString(int depth) {
   return serialized_config;
 }
 
-std::string NginxConfigStatement::ToString(int depth) {
+std::string NginxConfigStatement::ToString(int depth) const {
   std::string serialized_statement;
   for (int i = 0; i < depth; ++i) {
     serialized_statement.append("  ");

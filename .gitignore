@@ -6,9 +6,11 @@ serve
 config_parser
 *.gcno
 *.gcda
+*.old
 server_test
 server_config_test
 request_handler_test
 config_parser_test
+response_test
 config_parser
 Makefile~

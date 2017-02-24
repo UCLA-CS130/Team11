@@ -12,7 +12,7 @@ class NginxConfig;
 // The parsed representation of a single config statement.
 class NginxConfigStatement {
  public:
-  std::string ToString(int depth);
+  std::string ToString(int depth) const;
   std::vector<std::string> tokens_;
   std::unique_ptr<NginxConfig> child_block_;
 };
@@ -20,7 +20,7 @@ class NginxConfigStatement {
 // The parsed representation of the entire config.
 class NginxConfig {
  public:
-  std::string ToString(int depth = 0);
+  std::string ToString(int depth = 0) const;
   std::vector<std::shared_ptr<NginxConfigStatement>> statements_;
 };
 

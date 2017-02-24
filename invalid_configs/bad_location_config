@@ -1,9 +1,0 @@
-location static1 {
-	root example_dir;
-}
-
-listen 8888;
-
-loca /static2 {
-	root example_dir_2;
-}
