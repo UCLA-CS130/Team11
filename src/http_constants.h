@@ -8,13 +8,15 @@ const int MAX_PORT_NUM = 65535;
 const int MAX_LENGTH = 1024;
 const std::string PORT = "port"; 
 const std::string PATH = "path"; 
-const std::string ROOT = "root"; 
+const std::string ROOT = "root";
+const std::string DEFAULT = "default";
 const std::string CRLF = "\r\n"; 
 const std::string NAME_VALUE_SEPARATOR = ": ";
 
 // SERVER:
-const std::string DEFAULT_REQUEST = "/";
-const std::string ECHO_REQUEST = "/echo";
+const std::string NOT_FOUND_HANDLER = "NotFoundHandler";
+const std::string NOT_FOUND_HANDLER_URI = "/NotFoundHandler";
+
 
 // MIME TYPES:
 const std::string GIF = "image/gif";

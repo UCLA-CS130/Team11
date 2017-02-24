@@ -102,6 +102,28 @@ RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Resp
   return OK; 
 }
 
+RequestHandler::Status NotFoundHandler::Init(const std::string& uri_prefix, const NginxConfig& config) {
+  uri_ = uri_prefix;
+  return OK;
+}
+
+RequestHandler::Status NotFoundHandler::HandleRequest(const Request& request, Response* response) {
+
+  std::string body = "<html><body><h1>404 Not Found</h1></body></html>"; 
+  response->SetStatus(response->ResponseCode::NOT_FOUND);
+  response->ClearHeaders();
+  response->AddHeader("Content-Type", "text/html");
+  response->SetBody(body);
+
+  BOOST_LOG_TRIVIAL(info) << response->ToString();
+
+  return OK;
+}
+
+std::string NotFoundHandler::GetName() {
+  return "NotFoundHandler";
+}
+  
 std::string StaticHandler::GetName() {
   return "StaticHandler";
 }
