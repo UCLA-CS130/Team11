@@ -98,9 +98,9 @@ void Server::listen() {
 
       StatusCount::get_instance().request_count_++;
       if (request_status == RequestHandler::Status::OK) {
-        std::cout << "Handle request OK" << std::endl;
+        BOOST_LOG_TRIVIAL(info) << "Handle request OK";
+        BOOST_LOG_TRIVIAL(info) << "Putting status in map";
 
-        std::cout << "Putting status in map" << std::endl;
         StatusCount::get_instance().statuses_map_[parsed_request->uri()][resp.GetStatus()]++;
         
         std::string req_to_write = resp.ToString();
@@ -123,7 +123,7 @@ void Server::listen() {
         handler = server_config_->get_handler("404");
         request_status = handler->HandleRequest(*parsed_request, &resp404); 
         std::string req_to_write = resp404.ToString();
-        std::cout << "The response being written:\n" << req_buffer << std::endl;
+        BOOST_LOG_TRIVIAL(info) << "The response being written";
         boost::asio::write(socket, boost::asio::buffer(req_to_write.c_str(), req_to_write.size()));
         
       }
