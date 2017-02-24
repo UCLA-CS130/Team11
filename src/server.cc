@@ -88,6 +88,7 @@ void Server::listen() {
         // If that still fails, handler does not exist
         if (handler == nullptr) {
           BOOST_LOG_TRIVIAL(warning) << "Handler not found. Calling NotFoundHandler";
+          StatusCount::get_instance().statuses_map_[parsed_request->uri()][404]++;
           handler = server_config_->get_handler("404");
         }
       }
