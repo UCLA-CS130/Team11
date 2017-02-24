@@ -118,6 +118,11 @@ RequestHandler::Status NotFoundHandler::HandleRequest(const Request& request, Re
   BOOST_LOG_TRIVIAL(info) << response->ToString();
 
   return OK;
+}
+
+std::string NotFoundHandler::GetName() {
+  return "NotFoundHandler";
+}
   
 std::string StaticHandler::GetName() {
   return "StaticHandler";
