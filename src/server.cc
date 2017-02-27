@@ -1,7 +1,8 @@
 #include "server.h"
 #include "http_constants.h"
 
-Server::Server() : acceptor_(io_service_), server_config_(nullptr) {}
+// TODO: change initialization of threads
+Server::Server() : acceptor_(io_service_), server_config_(nullptr), num_threads_(5) {}
 
 Server::~Server() {
   if (server_config_) {
@@ -40,7 +41,19 @@ bool Server::init(const char* config_file) {
     BOOST_LOG_TRIVIAL(fatal) << "Zero handlers were specified or successfully built";
     return false; 
   }
+
+  spawn_threads();
+
   return true;
+}
+
+void Server::spawn_threads() {
+  // sources: http://stackoverflow.com/questions/19500404/how-to-create-a-thread-pool-using-boost-in-c
+  // http://stackoverflow.com/questions/8127080/boost-asio-multithreaded-tcp-synchronous-server
+  BOOST_LOG_TRIVIAL(info) << "Creating threads";
+  for(int i = 0; i < num_threads_; i++){
+    threadpool.create_thread(boost::bind(&boost::asio::io_service::run, &io_service_));
+  }
 }
 
 void Server::listen() {
@@ -128,9 +141,19 @@ void Server::listen() {
         boost::asio::write(socket, boost::asio::buffer(req_to_write.c_str(), req_to_write.size()));
         
       }
-      
- 
     }
+     /*
+   * This will stop the io_service processing loop. Any tasks
+   * you add behind this point will not execute.
+    */
+   BOOST_LOG_TRIVIAL(info) << "Stopping io service";
+    io_service_.stop();
+    /*
+   * Will wait till all the threads in the thread pool are finished with 
+   * their assigned tasks and 'join' them. Just assume the threads inside
+   * the threadpool will be destroyed by this method.
+   */
+    threadpool.join_all();
   }
   catch (std::exception& e)
   {
