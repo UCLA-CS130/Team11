@@ -12,6 +12,8 @@
 #include "request_handler.h"
 #include "status_count.h"
 #include <boost/thread.hpp>
+#include <thread>
+
 using boost::asio::ip::tcp;
 
 
@@ -21,7 +23,6 @@ public:
   ~Server(); 
   bool init(const char* config_file);
   void listen(); 
-  void spawn_threads();
 
 private: 
   // number of threads
