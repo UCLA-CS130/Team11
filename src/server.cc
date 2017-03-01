@@ -42,8 +42,6 @@ bool Server::init(const char* config_file) {
     return false; 
   }
 
- // spawn_threads();
-
   return true;
 }
 
@@ -108,13 +106,12 @@ void processConnection(tcp::socket socket, ServerConfig *server_config_) {
   else {
     BOOST_LOG_TRIVIAL(warning) << "Error with handling request"; 
 
-
     // TODO: Change to output more than just 404 responses, get rid of hardcoding
 
     StatusCount::get_instance().statuses_map_[parsed_request->uri()][404]++;
     StatusCount::get_instance().handlers_map_[parsed_request->uri()] = "-> Failed, Sent to NotFoundHandler";
 
-    // We should probably make this a series of if statements due to the specific nature of some
+    // TODO: We should probably make this a series of if statements due to the specific nature of some
     // of the statuses 
     
     Response resp404; 
@@ -128,6 +125,7 @@ void processConnection(tcp::socket socket, ServerConfig *server_config_) {
 }
 
 void Server::listen() {
+  // source for thread help: http://www.boost.org/doc/libs/1_52_0/doc/html/boost_asio/example/echo/blocking_tcp_echo_server.cpp
   try {
     while(true) {
       // Accept connection 
