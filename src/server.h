@@ -32,9 +32,6 @@ private:
 
   // for listening for connections
   tcp::acceptor acceptor_;
-
-  // thread group for thread pool
-  boost::thread_group threadpool;
   
   ServerConfig* server_config_; 
 

@@ -42,6 +42,13 @@ bool Server::init(const char* config_file) {
     return false; 
   }
 
+  if (server_config_->get_num_threads() == -1) {
+    BOOST_LOG_TRIVIAL(warning) << "Number of threads not found. Set to default of 5."; 
+  }
+  else {
+    num_threads_ = server_config_->get_num_threads();
+  }
+
   return true;
 }
 
