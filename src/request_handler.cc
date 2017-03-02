@@ -177,3 +177,64 @@ RequestHandler::Status StatusHandler::HandleRequest(const Request& request, Resp
 std::string StatusHandler::GetName() {
   return "StatusHandler";
 }
+
+/* PROXY HANDLER*/
+
+RequestHandler::Status ProxyHandler::Init(const std::string& uri_prefix, const NginxConfig& config) {
+  uri_ = uri_prefix;
+  bool flg_has_host = false;
+  for (unsigned int i = 0; i < config.statements_.size(); i++) {
+    std::vector<std::string> token_list = config.statements_[i]->tokens_; 
+    if (token_list.size() < 2) {
+      BOOST_LOG_TRIVIAL(warning) << token_list[0] << " missing value. Ignoring statement"; 
+      continue;
+    }
+
+    std::string token = token_list[0]; 
+    std::string value = token_list[1];
+
+    if (token == "host") {
+      root_ = value; // root url for proxy e.g. ucla.edu
+      flg_has_host = true;
+    }
+
+    if (token == "port"){
+      port_ = value;
+    }
+  }
+
+  if (not flg_has_host){
+    return MISSING_ROOT;
+  }
+  return OK; 
+}
+
+RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Response* response) {
+  BOOST_LOG_TRIVIAL(info) << "Called proxy handler: " + request.uri();
+  boost::system::error_code ec;
+
+  boost::asio::io_service svc;
+  boost::asio::ip::tcp::socket sock(svc);
+  boost::asio::ip::tcp::resolver resolver(svc);
+  boost::asio::ip::tcp::resolver::iterator endpoint = resolver.resolve(boost::asio::ip::tcp::resolver::query(root_, port_));
+  boost::asio::connect(sock, endpoint);
+
+  // send request
+  sock.send(boost::asio::buffer(request.raw_request()));
+
+  // read response
+  std::string res;
+  do {
+      char buf[1024];
+      size_t bytes_transferred = sock.receive(boost::asio::buffer(buf), {}, ec);
+      if (!ec) res.append(buf, buf + bytes_transferred);
+  } while (!ec);
+
+  response->SetResponseMsg(res);
+
+  return RequestHandler::Status::OK;
+}
+
+std::string ProxyHandler::GetName(){
+  return "ProxyHandler";
+}

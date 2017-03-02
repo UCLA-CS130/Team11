@@ -40,7 +40,10 @@ int ServerConfig::get_port() {
 
 bool ServerConfig::well_formed_uri(std::string uri) {
   int size = uri.size();
-  if (uri[0] != '/' || uri[size-1] == '/') {
+  // if (uri[0] != '/' || uri[size-1] == '/') {
+  //   return false; 
+  // }
+  if (uri[0] != '/') {
     return false; 
   }
   // Check for repeated '/' in a row

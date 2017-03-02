@@ -24,6 +24,10 @@ void Response::ClearHeaders() {
 
 std::string Response::ToString()
 {
+  if (response_msg_ != ""){
+    return response_msg_;
+  }
+
   std::string response_header = "";
   response_header += "HTTP/1.1 " + getTextForEnum(status_) + CRLF;
   for (unsigned int i = 0; i < headers_container_.size(); ++i)
