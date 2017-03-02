@@ -71,7 +71,7 @@ expected_response = """HTTP/1.1 200 OK\r
 Content-Type: text/plain\r
 \r
 GET /echo HTTP/1.1\r
-User-Agent: curl/7.22.0 (i686-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3\r
+User-Agent: curl/7.35.0\r
 Host: localhost:9999\r
 Accept: */*\r\n\r\n"""
 echo_response = echo_request_process.stdout.read().decode('utf-8')
