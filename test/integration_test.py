@@ -67,25 +67,31 @@ telnet_request_process = subprocess.Popen(telnet_request, stdout=subprocess.PIPE
 
 echo_request = "curl -i localhost:9999/echo"
 echo_request_process = subprocess.Popen(echo_request, stdout=subprocess.PIPE, shell=True)
-expected_response = """HTTP/1.1 200 OK\r
+expected_response_first = """HTTP/1.1 200 OK\r
 Content-Type: text/plain\r
 \r
 GET /echo HTTP/1.1\r
-User-Agent: curl/7.35.0\r
-Host: localhost:9999\r
+User-Agent: curl/"""
+
+# splitting in half, because user-agent 'curl' is dependent on machine
+
+expected_response_second = """Host: localhost:9999\r
 Accept: */*\r\n\r\n"""
+
 echo_response = echo_request_process.stdout.read().decode('utf-8')
 
 print "Echo response:"
 print echo_response
 print "Expected response:"
-print expected_response.decode('utf-8')
+print expected_response_first.decode('utf-8')
+print expected_response_second.decode('utf-8')
 
-if echo_response != expected_response:
+if expected_response_first in echo_response and expected_response_second in echo_response:
+  print "SUCCESS: Echo handler replied with the correct response. Multithreading works."
+else:
   print "ERROR: Echo handler replied with the wrong response."
   exit(1)
-else:
-  print "SUCCESS: Echo handler replied with the correct response. Multithreading works."
+
 # End of Multithreading Testing
 
 print 'Sending requests to server...'
