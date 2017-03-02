@@ -59,6 +59,35 @@ if subprocess.call(["sudo","make"]) != 0:
 print 'Running webserver...'
 serv = subprocess.Popen(["./serve", "new_config"])
 
+# Start of Multithreading Testing
+
+# Spawn shell process as hanging http request
+telnet_request = "telnet localhost 9999"
+telnet_request_process = subprocess.Popen(telnet_request, stdout=subprocess.PIPE, shell=True)
+
+echo_request = "curl -i localhost:9999/echo"
+echo_request_process = subprocess.Popen(echo_request, stdout=subprocess.PIPE, shell=True)
+expected_response = """HTTP/1.1 200 OK\r
+Content-Type: text/plain\r
+\r
+GET /echo HTTP/1.1\r
+User-Agent: curl/7.22.0 (i686-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3\r
+Host: localhost:9999\r
+Accept: */*\r\n\r\n"""
+echo_response = echo_request_process.stdout.read().decode('utf-8')
+
+print "Echo response:"
+print echo_response
+print "Expected response:"
+print expected_response.decode('utf-8')
+
+if echo_response != expected_response:
+  print "ERROR: Echo handler replied with the wrong response."
+  exit(1)
+else:
+  print "SUCCESS: Echo handler replied with the correct response. Multithreading works."
+# End of Multithreading Testing
+
 print 'Sending requests to server...'
 # Proxy issue fix:
 session = requests.Session()
