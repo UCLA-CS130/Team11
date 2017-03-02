@@ -74,24 +74,30 @@ void Server::listen() {
       BOOST_LOG_TRIVIAL(info) << "Received the following request:";
       parsed_request->print_contents();
 
-      // Route request:
+      // Route request: 
+      // In the event of root prefixes, attempt to find matching handler by uri() first:
+      std::shared_ptr<RequestHandler> handler = server_config_->get_handler(parsed_request->uri());
+
       // Attempt to find the longest matching prefix
       // We are calling by path() in anticipation for serving a file      
-      std::string longest_prefix = server_config_->find_longest_matching_prefix(parsed_request->path()); 
-      BOOST_LOG_TRIVIAL(info) << "Longest matching prefix:" << longest_prefix;
-
-      std::shared_ptr<RequestHandler> handler = server_config_->get_handler(longest_prefix); 
       if (handler == nullptr) {
-        // Attempt to call by uri() instead (this is for requests one level deep - ie /status, /echo
-        handler = server_config_->get_handler(parsed_request->uri()); 
+        std::string longest_prefix = server_config_->find_longest_matching_prefix(parsed_request->path()); 
+        BOOST_LOG_TRIVIAL(info) << "Longest matching prefix:" << longest_prefix;
 
-        // If that still fails, handler does not exist
+        handler = server_config_->get_handler(longest_prefix); 
         if (handler == nullptr) {
-          BOOST_LOG_TRIVIAL(warning) << "Handler not found. Calling NotFoundHandler";
-          StatusCount::get_instance().statuses_map_[parsed_request->uri()][404]++;
-          handler = server_config_->get_handler("404");
+          // Attempt to call by uri() instead (this is for requests one level deep - ie /status, /echo
+          handler = server_config_->get_handler(parsed_request->uri()); 
+
+          // If that still fails, handler does not exist
+          if (handler == nullptr) {
+            BOOST_LOG_TRIVIAL(warning) << "Handler not found. Calling NotFoundHandler";
+            StatusCount::get_instance().statuses_map_[parsed_request->uri()][404]++;
+            handler = server_config_->get_handler("404");
+          }
         }
       }
+      
 
       // Handle Request
       Response resp; 

@@ -40,6 +40,9 @@ int ServerConfig::get_port() {
 
 bool ServerConfig::well_formed_uri(std::string uri) {
   int size = uri.size();
+  if (size == 1 && uri == "/") {
+    return true;
+  }
   if (uri[0] != '/' || uri[size-1] == '/') {
     return false; 
   }
