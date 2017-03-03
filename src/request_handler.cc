@@ -216,19 +216,48 @@ RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Respo
   boost::asio::io_service svc;
   boost::asio::ip::tcp::socket sock(svc);
   boost::asio::ip::tcp::resolver resolver(svc);
-  boost::asio::ip::tcp::resolver::iterator endpoint = resolver.resolve(boost::asio::ip::tcp::resolver::query(root_, port_));
-  boost::asio::connect(sock, endpoint);
 
-  // send request
-  sock.send(boost::asio::buffer(request.raw_request()));
-
-  // read response
+  std::string req = request.raw_request();
   std::string res;
-  do {
-      char buf[1024];
-      size_t bytes_transferred = sock.receive(boost::asio::buffer(buf), {}, ec);
-      if (!ec) res.append(buf, buf + bytes_transferred);
-  } while (!ec);
+  bool flg_302 = false;
+
+  do{
+    // connect
+    boost::asio::ip::tcp::resolver::iterator endpoint = resolver.resolve(boost::asio::ip::tcp::resolver::query(root_, port_));
+    boost::asio::connect(sock, endpoint);
+    BOOST_LOG_TRIVIAL(debug) << "Resolved IP: " << sock.remote_endpoint().address().to_string();
+
+    // send request
+    size_t h = req.find("Host");
+    size_t end = req.find("\n", h);
+    req.replace(h, end - h, "Host: " + root_);
+    BOOST_LOG_TRIVIAL(debug) << "Proxy request: \n" << req << "=============";
+    sock.send(boost::asio::buffer(req));
+
+    // read response
+    res = "";
+    do {
+        char buf[1024];
+        size_t bytes_transferred = sock.receive(boost::asio::buffer(buf), {}, ec);
+        if (!ec) res.append(buf, buf + bytes_transferred);
+    } while (!ec);
+
+    BOOST_LOG_TRIVIAL(debug) << "Proxy response: \n" << res << "=============";
+    //check for 302
+    if (res.find("HTTP/1.1 302 Found") != std::string::npos){
+      flg_302 = true;
+      BOOST_LOG_TRIVIAL(debug) << "Received 302";
+      //find new redirect location
+      size_t loc = res.find("Location");
+      size_t www = res.find("www", loc);
+      size_t slash = res.find("/", www);
+      root_ = res.substr(www, slash - www);
+      BOOST_LOG_TRIVIAL(debug) << "New location: " << root_;
+    }
+    else{
+      flg_302 = false;
+    }
+  }while(flg_302);
 
   response->SetResponseMsg(res);
 
