@@ -11,8 +11,11 @@
 #include "response.h"
 #include "request_handler.h"
 #include "status_count.h"
+#include <boost/thread.hpp>
+#include <thread>
 
 using boost::asio::ip::tcp;
+
 
 class Server {
 public: 
@@ -23,8 +26,14 @@ public:
 
 private: 
   boost::asio::io_service io_service_;
+
+  // for listening for connections
   tcp::acceptor acceptor_;
+  
   ServerConfig* server_config_; 
+
+  // number of threads
+  int num_threads_;
 
   void init_acceptor();
 };

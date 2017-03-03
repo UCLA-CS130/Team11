@@ -38,6 +38,25 @@ int ServerConfig::get_port() {
   return port_; 
 }
 
+int ServerConfig::get_num_threads() {
+  std::string token;
+  std::string value;
+  for (unsigned int i = 0; i < config_->statements_.size(); i++) {
+    std::vector<std::string> token_list = config_->statements_[i]->tokens_; 
+    if (token_list.size() < 2) {
+      continue; 
+    }
+    token = token_list[0]; 
+    value = token_list[1];
+    if (token == NUM_THREADS) {
+      if (isdigit(value[0])) {
+        num_threads_ = std::stoi(value); 
+      }
+    }
+  }
+  return num_threads_; 
+}
+
 bool ServerConfig::well_formed_uri(std::string uri) {
   int size = uri.size();
   if (size == 1 && uri == "/") {
