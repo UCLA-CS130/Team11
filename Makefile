@@ -4,7 +4,7 @@ OPTIMIZE=-O0
 CC = g++
 CFLAGS = $(OPTIMIZE) -std=c++11 -g -Wall -DBOOST_LOG_DYN_LINK
 TCFLAGS = --coverage
-LIBFLAGS =  -lboost_system -lboost_filesystem -lboost_log -lpthread
+LIBFLAGS =  -lboost_system -lboost_filesystem -lboost_log -lboost_thread -lpthread
 SRC_DIR=src
 TEST_DIR=test
 SRC_FILES=$(wildcard src/*.cc)
