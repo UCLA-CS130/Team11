@@ -25,15 +25,15 @@ public:
   void listen(); 
 
 private: 
-  // number of threads
-  int num_threads_;
-  
   boost::asio::io_service io_service_;
 
   // for listening for connections
   tcp::acceptor acceptor_;
   
   ServerConfig* server_config_; 
+
+  // number of threads
+  int num_threads_;
 
   void init_acceptor();
 };
