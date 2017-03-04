@@ -239,7 +239,9 @@ RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Respo
     do {
         char buf[1024];
         size_t bytes_transferred = sock.receive(boost::asio::buffer(buf), {}, ec);
-        if (!ec) res.append(buf, buf + bytes_transferred);
+        if (!ec) {
+          res.append(buf, buf + bytes_transferred);
+        }
     } while (!ec);
 
     BOOST_LOG_TRIVIAL(debug) << "Proxy response: \n" << res << "=============";
