@@ -7,7 +7,7 @@ import time
 
 
 
-server = subprocess.Popen(['./serve', 'new_config'])
+server = subprocess.Popen(['../serve', '../new_config'])
 time.sleep(0.03)
 
 # make two request to the , one to the proxy server, one to the ucla.edu
