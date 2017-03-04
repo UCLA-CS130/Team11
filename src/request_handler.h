@@ -5,10 +5,11 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <boost/asio.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
-
+#include <iostream>
 
 #include "response.h"
 #include "config_parser.h"
@@ -94,11 +95,22 @@ REGISTER_REQUEST_HANDLER(NotFoundHandler);
 
 class StatusHandler : public RequestHandler {
   public:
-  virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
-  virtual Status HandleRequest(const Request& request, Response* response);
-  virtual std::string GetName();
+    virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
+    virtual Status HandleRequest(const Request& request, Response* response);
+    virtual std::string GetName();
 };
 
 REGISTER_REQUEST_HANDLER(StatusHandler);
+
+class ProxyHandler : public RequestHandler {
+  public:
+    virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
+    virtual Status HandleRequest(const Request& request, Response* response);
+    virtual std::string GetName();
+  private:
+    std::string port_ = "80";
+};
+
+REGISTER_REQUEST_HANDLER(ProxyHandler);
 
 #endif  // REQUEST_HANDLER_H
