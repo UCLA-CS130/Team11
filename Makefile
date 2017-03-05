@@ -52,6 +52,7 @@ test: config_parser_test server_test request_handler_test server_config_test res
 	./request_test
 	./status_count_test
 	python $(TEST_DIR)/integration_test.py
+	python $(TEST_DIR)/multithreading_test.py 4
 
 clean: 
 	rm -f $(TARGET) *.o *.a request_handler_test config_parser_test server_test server_config_test response_test status_count_test request_test *.gcno *.gcda
