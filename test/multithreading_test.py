@@ -27,6 +27,10 @@ User-Agent: curl/"""
 expected_response_second = """Host: localhost:9999\r
 Accept: */*\r\n\r\n"""
 
+# Spawn shell process as hanging http request
+telnet_request = "telnet localhost 9999"
+telnet_request_process = subprocess.Popen(telnet_request, stdout=subprocess.PIPE, shell=True)
+
 for request_index in range(num_threads):
 	echo_request = "curl -i localhost:9999/echo"
 	echo_request_process = subprocess.Popen(echo_request, stdout=subprocess.PIPE, shell=True)
