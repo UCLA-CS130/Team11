@@ -22,7 +22,7 @@ expected_response_first = """HTTP/1.1 200 OK\r
 Content-Type: text/plain\r
 \r
 GET /echo HTTP/1.1\r
-User-Agent: telnet"""
+User-Agent: curl/"""
 
 expected_response_second = """Host: localhost:9999\r
 Accept: */*\r\n\r\n"""
@@ -33,5 +33,13 @@ for request_index in range(num_threads):
 	echo_response = echo_request_process.stdout.read().decode('utf-8')
 	
 	print("Echo response: " + str(echo_response))
+	print "Expected response:"
+	print expected_response_first.decode('utf-8')
+	print expected_response_second.decode('utf-8')
+	if expected_response_first not in echo_response or expected_response_second not in echo_response:
+		print "ERROR: Echo handler replied with the wrong response."
+		exit(1)
+
+print "SUCCESS: Echo handler replied with the correct response. Multithreading works."
 
 serv.kill()
