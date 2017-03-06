@@ -3,7 +3,7 @@
 #endif
 
 #include "gtest/gtest.h"
-#include "server_config.h"
+#include "../src/server_config.h"
 
 TEST(ServerConfigTest, GetPortNumber) {
   ServerConfig s;

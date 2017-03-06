@@ -4,9 +4,9 @@
 #include <gmock/gmock.h>
 
 #include "gtest/gtest.h"
-#include "config_parser.h"
-#include "server.h"
-#include "server_config.h"
+#include "../src/config_parser.h"
+#include "../src/server.h"
+#include "../src/server_config.h"
 
 class MockServerConfig : public ServerConfig {
 public:

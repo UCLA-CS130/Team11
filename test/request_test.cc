@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "request.h"
+#include "../src/request.h"
 
 TEST(RequestTest, ParseRequestTest)
 {

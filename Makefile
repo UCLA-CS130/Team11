@@ -1,57 +1,55 @@
-# Makefile based of tutorial here:
-# http://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
-OPTIMIZE=-O0
-CC = g++
-CFLAGS = $(OPTIMIZE) -std=c++11 -g -Wall -DBOOST_LOG_DYN_LINK
-TCFLAGS = --coverage
-LIBFLAGS =  -lboost_system -lboost_filesystem -lboost_log -lboost_thread -lpthread
-SRC_DIR=src
-TEST_DIR=test
-SRC_FILES=$(wildcard src/*.cc)
-SRC = config_parser.cc serve_main.cc server.cc request_handler.cc server_config.cc request.cc response.cc
 GTEST_DIR=googletest/googletest
 GMOCK_DIR=googletest/googlemock
+TEST_DIR=test
+SRC_DIR=src
+BUILD_DIR=build
+
+CC =g++
+CFLAGS =-g -Wall -std=c++11 
+LIBFLAGS =-static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_filesystem -lboost_thread
+TFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
+TARGS =-pthread
+TLINK =-L./build/ -lgmock -lgtest -lboost_system -lboost_log -lboost_filesystem -lpthread
 TARGET=serve
 
-$(TARGET): $(SRC_FILES)
-	$(CC) $(SRC_FILES) $(CFLAGS) $(LIBFLAGS) -o $(TARGET) 
+CCFILE = src/*.cc
+HEADERS = src/*.h
 
-config_parser_test:
-	$(CC) -std=c++0x -isystem ${GTEST_DIR}/include -I${GTEST_DIR} -c ${GTEST_DIR}/src/gtest-all.cc
-	$(CC) -std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -I${GMOCK_DIR} -I${GTEST_DIR} -pthread -c ${GMOCK_DIR}/src/gmock-all.cc
+$(TARGET): $(CCFILE) $(HEADERS)
+	$(CC) $(CCFILE) $(CFLAGS) $(LIBFLAGS) -o serve
+
+gtest_setup:
+	g++ -isystem ${GTEST_DIR}/include -I${GTEST_DIR} \
+	-pthread -c ${GTEST_DIR}/src/gtest-all.cc
 	ar -rv libgtest.a gtest-all.o
-	ar -rv libgmock.a gmock-all.o
-	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o config_parser_test
 
-server_test:
-	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -I${SRC_DIR} $(TEST_DIR)/server_test.cc $(SRC_DIR)/server.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc ${GMOCK_DIR}/src/gmock_main.cc libgtest.a libgmock.a $(LIBFLAGS) -o server_test
+	g++ -isystem ${GTEST_DIR}/include -I${GTEST_DIR} \
+	-isystem ${GMOCK_DIR}/include -I${GMOCK_DIR} \
+	-pthread -c ${GMOCK_DIR}/src/gmock-all.cc
+	ar -rv libgmock.a gtest-all.o gmock-all.o
+	rm gtest-all.o gmock-all.o
 
-request_handler_test:
-	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/request_handler_test.cc $(SRC_DIR)/server.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o request_handler_test
 
-server_config_test:
-	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/server_config_test.cc $(SRC_DIR)/server.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o server_config_test
+config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc
+	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o config_parser_test
 
-response_test:
-	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/response_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/request.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o response_test
+#request_handler_test: $(TEST_DIR)/request_handler_test.cc $(SRC_DIR)/request_handler.cc $(SRC_DI#R)/request.cc $(SRC_DIR)/response.cc 
+#	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o request_handler_test
 
-request_test:
-	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/request_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/request.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o request_test
+#request_test: $(TEST_DIR)/request_test.cc $(SRC_DIR)/request.cc
+#	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o request_test
 
-status_count_test:
-	$(CC) $(CFLAGS) -std=c++0x -isystem ${GTEST_DIR}/include -I${SRC_DIR} $(TEST_DIR)/status_count_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/response.cc $(SRC_DIR)/request.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc ${GTEST_DIR}/src/gtest_main.cc libgtest.a $(LIBFLAGS) -o status_count_test
+#response_test: $(TEST_DIR)/response_test.cc $(SRC_DIR)/response.cc
+#	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o response_test
 
-# NOTE: config_parser_test must be executed first -- the command does the googletest setup neccessary for the later tests
+#server_config_test: $(TEST_DIR)/server_config_test.cc $(SRC_DIR)/server_config.cc
+#	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o server_config_test	
 
-test: config_parser_test server_test request_handler_test server_config_test response_test request_test status_count_test
+#status_count_test: $(TEST_DIR)/status_count_test.cc $(SRC_DIR)/status_count.cc
+#	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o status_count_test	
+
+test: gtest_setup config_parser_test
 	./config_parser_test
-	./server_test
-	./request_handler_test
-	./server_config_test
-	./response_test
-	./request_test
-	./status_count_test
-	python $(TEST_DIR)/integration_test.py
 
-clean: 
-	rm -f $(TARGET) *.o *.a request_handler_test config_parser_test server_test server_config_test response_test status_count_test request_test *.gcno *.gcda
+clean:
+	rm -rf $(TARGET) config_parser_test
