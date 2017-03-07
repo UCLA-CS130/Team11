@@ -66,7 +66,8 @@ docker:
 	docker build -f deploy/Dockerfile.run -t serve.deploy .
 
 deploy:
-	docker run --rm -t -p 9999:9999 serve.deploy
+	chmod +x deploy_aws.sh
+	./aws.sh
 
 clean:
 	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/binary.tar deploy/Dockerfile.run~
