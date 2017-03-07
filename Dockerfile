@@ -5,11 +5,9 @@ RUN apt-get install -y libboost-all-dev
 RUN apt-get install -y make
 RUN apt-get install -y g++
 
-WORKDIR /opt/webserver
-COPY . /opt/webserver
+WORKDIR /opt/web-serve
+COPY . /opt/web-serve
 
 RUN make clean && make
-WORKDIR "build"
 
-EXPOSE 9999:9999
-CMD ["./serve", "new_config"]
+CMD tar -cf - serve

@@ -54,6 +54,19 @@ test: gtest_setup config_parser_test request_handler_test request_test response_
 	./response_test
 	./server_config_test
 	./status_count_test
+	#python $(TEST_DIR)/integration_test.py
+	#python $(TEST_DIR)/multithreading_test.py 4
+
+docker:
+	docker build -t serve.build .
+	docker run serve.build > deploy/binary.tar
+	tar -xvf deploy/binary.tar
+	cp -r test/ deploy
+	rm -f deploy/binary.tar
+	docker build -f deploy/Dockerfile.run -t serve.deploy .
+
+deploy:
+	docker run --rm -t -p 9999:9999 serve.deploy
 
 clean:
-	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test
+	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/binary.tar deploy/Dockerfile.run~
