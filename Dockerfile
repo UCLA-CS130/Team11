@@ -14,3 +14,4 @@ COPY . /opt/web-serve
 RUN make clean && make
 
 CMD ["tar", "-cf", "-", "serve"]
+
