@@ -57,20 +57,27 @@ test: gtest_setup config_parser_test request_handler_test request_test response_
 	python $(TEST_DIR)/integration_test.py
 	python $(TEST_DIR)/multithreading_test.py 4
 
-docker:
+# Create the initial build file 
+docker: Dockerfile
 	docker build -t serve.build .
-	docker run serve.build > deploy/binary.tar
-	tar -xvf deploy/binary.tar
-	cp -r test/ deploy
-	rm -f deploy/binary.tar
-	sudo docker build -f deploy/Dockerfile.run -t serve.deploy .
+	docker run --rm serve.build > serve.tar
 
-deploy:
-	sudo docker save serve.deploy | bzip2 | ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com 'bunzip2 | docker load'
-	ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com -t 'docker stop $$(docker ps -a -q); docker run -d -t -p 80:2020 serve.deploy;'
+deploy: serve.tar Dockerfile.run
+	rm -rf deploy
+	mkdir deploy
+	tar -xf serve.tar -C deploy
+	cp Dockerfile.run deploy
+	cp new_config deploy
+	cp -r example_dir deploy
+	cp -r example_dir_2 deploy
+	cd deploy; \
+	docker build -f Dockerfile.run -t serve.deploy .
+	chmod 400 team11-ec2-key-pair.pem
+	docker save serve.deploy | bzip2 | ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com 'bunzip2 | docker load'
+	ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com -t 'docker stop $$(docker ps -a -q); docker run -d -t -p 80:9999 serve.deploy;'
 
 clean:
-	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/binary.tar deploy/Dockerfile.run~ deploy_aws.sh~
+	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/ serve.tar
 
 .PHONY: clean test deploy
 
