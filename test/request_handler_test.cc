@@ -1,12 +1,11 @@
 #define TEST_REQUEST_HANDLER
 
 #include "gtest/gtest.h"
-#include "request_handler.h"
-#include "request.h"
-#include "response.h"
-#include "http_constants.h"
-#include "config_parser.h"
-#include "request.h"
+#include "../src/request_handler.h"
+#include "../src/request.h"
+#include "../src/response.h"
+#include "../src/http_constants.h"
+#include "../src/config_parser.h"
 
 TEST(RequestHandlerTest, EchoTest)
 {

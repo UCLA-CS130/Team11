@@ -1,0 +1,9 @@
+FROM busybox:ubuntu-14.04
+
+WORKDIR /opt/web-serve
+COPY . /opt/web-serve
+
+EXPOSE 9999:9999
+
+CMD ["./serve", "new_config"]
+

@@ -14,3 +14,6 @@ config_parser_test
 response_test
 config_parser
 Makefile~
+team11-ec2-key-pair.pem
+deploy/
+serve.tar

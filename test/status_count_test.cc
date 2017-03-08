@@ -3,7 +3,7 @@
 #endif
 
 #include "gtest/gtest.h"
-#include "status_count.h"
+#include "../src/status_count.h"
 
 TEST(StatusCountTest, HandlersMapTest)
 {
