@@ -63,11 +63,11 @@ docker:
 	tar -xvf deploy/binary.tar
 	cp -r test/ deploy
 	rm -f deploy/binary.tar
-	docker build -f deploy/Dockerfile.run -t serve.deploy .
+	sudo docker build -f deploy/Dockerfile.run -t serve.deploy .
 
 deploy:
-	chmod +x deploy_aws.sh
-	./deploy_aws.sh
+	sudo docker save serve.deploy | bzip2 | ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com 'bunzip2 | docker load'
+	ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com -t 'docker stop $$(docker ps -a -q); docker run -d -t -p 80:2020 serve.deploy;'
 
 clean:
 	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/binary.tar deploy/Dockerfile.run~ deploy_aws.sh~
