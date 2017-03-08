@@ -54,8 +54,8 @@ test: gtest_setup config_parser_test request_handler_test request_test response_
 	./response_test
 	./server_config_test
 	./status_count_test
-	#python $(TEST_DIR)/integration_test.py
-	#python $(TEST_DIR)/multithreading_test.py 4
+	python $(TEST_DIR)/integration_test.py
+	python $(TEST_DIR)/multithreading_test.py 4
 
 docker:
 	docker build -t serve.build .
@@ -73,4 +73,5 @@ clean:
 	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/binary.tar deploy/Dockerfile.run~ deploy_aws.sh~
 
 .PHONY: clean test deploy
+
 
