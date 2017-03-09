@@ -5,7 +5,7 @@ SRC_DIR=src
 
 CC =g++
 CFLAGS =-g -Wall -std=c++11 
-LIBFLAGS =-static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_filesystem -lboost_thread
+LIBFLAGS =-static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_filesystem -lboost_thread -lboost_regex
 TFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TARGS =-pthread
 TLINK =-L./ -lgmock -lgtest -lboost_system -lboost_log -lboost_filesystem -lpthread
