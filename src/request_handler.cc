@@ -269,3 +269,90 @@ RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Respo
 std::string ProxyHandler::GetName(){
   return "ProxyHandler";
 }
+
+/**
+ * MARKDOWN HANDLER
+ */
+
+RequestHandler::Status MarkdownHandler::Init(const std::string& uri_prefix, const NginxConfig& config) {
+  uri_ = uri_prefix; 
+  for (unsigned int i = 0; i < config.statements_.size(); i++) {
+    std::vector<std::string> token_list = config.statements_[i]->tokens_; 
+    if (token_list.size() < 2) {
+      BOOST_LOG_TRIVIAL(warning) << token_list[0] << " missing value. Ignoring statement"; 
+      continue;
+    }
+
+    std::string token = token_list[0]; 
+    std::string value = token_list[1];
+
+    if (token == ROOT) {
+      boost::filesystem::path p(value);
+      if (boost::filesystem::exists(p) && boost::filesystem::is_directory(p)) {
+        root_ = value;
+        return OK; 
+      }
+      else {
+        BOOST_LOG_TRIVIAL(warning) << value << " is an invalid path or not a directory."; 
+        return INVALID_PATH; 
+      }
+    }
+  }
+  return MISSING_ROOT;
+}
+
+RequestHandler::Status MarkdownHandler::HandleRequest(const Request& request, Response* response) {
+  if (response == nullptr) {
+    return INVALID_RESPONSE;
+  }
+
+  // TODO: Handle Non markdown file
+  
+  response->SetStatus(Response::OK); 
+  response->AddHeader(CONTENT_TYPE, request.mime_type());
+
+  std::string file_path = root_ + "/" + request.file(); 
+
+  BOOST_LOG_TRIVIAL(debug) << "File path to be opened: " << file_path << std::endl;
+
+  // Verify if file exists:
+  boost::filesystem::path p(file_path);
+  if (boost::filesystem::exists(p) && !boost::filesystem::is_directory(p)) {
+    // Attempt to open file:
+    boost::filesystem::ifstream* file_stream = new boost::filesystem::ifstream(p);
+    if (file_stream == nullptr || !file_stream->is_open()) {
+      // TODO: For now it will be handled by 404, by this is better as a 500 Internal Service Error
+      BOOST_LOG_TRIVIAL(warning) << "The file at " << file_path << "does not exist or is unabled to be opened"; 
+      return FILE_NOT_FOUND; 
+    }
+
+    // Attempt to read in file and write to body string
+    char buffer[512]; 
+    std::string body = "";
+    while(file_stream->read(buffer, sizeof(buffer)).gcount() > 0) {
+      body.append(buffer, file_stream->gcount());
+    }
+
+    // Process markdown body with markdown-cpp
+    markdown::Document doc;
+    std::stringstream ss;
+    std::string html_md;   
+    doc.read(body);
+    BOOST_LOG_TRIVIAL(debug) << "Markdown tokens: \n";
+    doc.writeTokens(std::cout); 
+    doc.write(ss);  
+    html_md = ss.str();
+    BOOST_LOG_TRIVIAL(debug) << "Markdown html: \n" << html_md; 
+    response->SetBody(html_md); 
+    //TODO: Potentially have some checks here? 
+  }
+  else {
+    return FILE_NOT_FOUND; 
+  }
+
+  return OK; 
+}
+
+std::string MarkdownHandler::GetName(){
+  return "MarkdownHandler";
+}

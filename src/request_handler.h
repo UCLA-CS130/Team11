@@ -115,4 +115,13 @@ class ProxyHandler : public RequestHandler {
 
 REGISTER_REQUEST_HANDLER(ProxyHandler);
 
+class MarkdownHandler : public RequestHandler {
+ public:
+  virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
+  virtual Status HandleRequest(const Request& request, Response* response);
+  virtual std::string GetName();
+};
+
+REGISTER_REQUEST_HANDLER(MarkdownHandler);
+
 #endif  // REQUEST_HANDLER_H
