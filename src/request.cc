@@ -9,6 +9,7 @@ void Request::build_map() {
   mime_map_[".jpg"] = JPG;
   mime_map_[".jpeg"] = JPG;
   mime_map_[".png"] = PNG;
+  mime_map_[".md"] = HTML; 
 }
 
 std::string Request::extension_to_type(std::string ext) {

@@ -24,6 +24,10 @@ path /echo/foo/bar EchoHandler {}
 path / ProxyHandler { 
 	host ucla.edu; 
 	port 80;
+}
+
+path /markdown MarkdownHandler {
+  root example_dir; 
 } 
 
 # Default response handler if no handlers match.

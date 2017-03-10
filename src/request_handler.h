@@ -14,6 +14,8 @@
 #include "response.h"
 #include "config_parser.h"
 #include "request.h"
+#include "markdown.h"
+
 
 class RequestHandler {
 public:
