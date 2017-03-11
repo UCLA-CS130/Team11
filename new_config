@@ -26,6 +26,11 @@ path / ProxyHandler {
 	port 80;
 } 
 
+path /database DatabaseHandler {
+	user foo;
+	password foobar;
+}
+
 # Default response handler if no handlers match.
 default NotFoundHandler {}
 

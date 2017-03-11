@@ -15,6 +15,17 @@
 #include "config_parser.h"
 #include "request.h"
 
+#include "mysql_connection.h"
+#include "mysql_driver.h"
+
+
+#include <cppconn/driver.h>
+#include <cppconn/exception.h>
+#include <cppconn/metadata.h>
+#include <cppconn/resultset.h>
+#include <cppconn/statement.h>
+
+
 class RequestHandler {
 public:
   enum Status {
@@ -112,5 +123,20 @@ class ProxyHandler : public RequestHandler {
 };
 
 REGISTER_REQUEST_HANDLER(ProxyHandler);
+
+class DatabaseHandler : public RequestHandler {
+  public:
+    virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
+    virtual Status HandleRequest(const Request& request, Response* response);
+    virtual std::string GetName();
+  private:
+    std::string user_name_;
+    std::string password_;
+    sql::mysql::MySQL_Driver *driver_;
+
+};
+
+REGISTER_REQUEST_HANDLER(DatabaseHandler);
+
 
 #endif  // REQUEST_HANDLER_H

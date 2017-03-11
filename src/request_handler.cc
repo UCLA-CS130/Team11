@@ -2,6 +2,7 @@
 #include "http_constants.h"
 #include "status_count.h"
 
+
 #include <sstream>
 
 std::map<std::string, RequestHandler* (*)(void)>* request_handler_builders = nullptr;
@@ -268,4 +269,49 @@ RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Respo
 
 std::string ProxyHandler::GetName(){
   return "ProxyHandler";
+}
+
+
+
+RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, const NginxConfig& config)
+{
+
+  uri_ = uri_prefix;
+
+  for (unsigned int i = 0; i < config.statements_.size(); i++) {
+    std::vector<std::string> token_list = config.statements_[i]->tokens_; 
+    if (token_list.size() < 2) {
+      BOOST_LOG_TRIVIAL(warning) << token_list[0] << " missing value. Ignoring statement"; 
+      continue;
+    }
+
+    std::string token = token_list[0]; 
+    std::string value = token_list[1];
+
+    if (token == "user") {
+      user_name_ = value; // user name for database
+    }
+
+    if (token == "password"){
+      password_ = value;
+    }
+  }
+
+  //Initialize the database connection
+  driver_ = sql::mysql::get_mysql_driver_instance();
+
+  return OK; 
+}
+
+RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Response* response)
+{
+  //do something 
+
+
+
+  return RequestHandler::Status::OK;
+}
+
+std::string DatabaseHandler::GetName(){
+  return "DatabaseHandler";
 }
