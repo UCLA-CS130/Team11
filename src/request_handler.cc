@@ -307,7 +307,12 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
 {
   //do something 
 
+  std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>"; 
 
+  response->SetStatus(response->ResponseCode::OK);
+  response->ClearHeaders();
+  response->AddHeader("Content-Type", "text/html");
+  response->SetBody(body);
 
   return RequestHandler::Status::OK;
 }
