@@ -25,7 +25,7 @@ public:
     INVALID_PATH = 2,
     INVALID_RESPONSE = 3,
     FILE_NOT_FOUND = 4, 
-    INVALID_MD_FILE = 5
+  
     // Define your status codes here.
   };
 
