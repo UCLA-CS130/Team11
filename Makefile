@@ -8,7 +8,7 @@ CFLAGS =-g -Wall -std=c++11
 LIBFLAGS = -lmysqlcppconn-static -lmysqlclient -ldl -lz -lc -static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_filesystem -lboost_thread
 TFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TARGS =-pthread
-TLINK =-L./ -lmysqlcppconn-static -lmysqlclient -ldl -lz -lc -lgmock -lgtest -lboost_system -lboost_log -lboost_filesystem -lpthread
+TLINK =-L./ -lmysqlcppconn -lmysqlclient -ldl -lz -lc -lgmock -lgtest -lboost_system -lboost_log -lboost_filesystem -lpthread
 TARGET=serve
 
 CCFILE = src/*.cc
