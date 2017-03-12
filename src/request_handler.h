@@ -16,7 +16,6 @@
 #include "request.h"
 #include "markdown.h"
 
-
 class RequestHandler {
 public:
   enum Status {

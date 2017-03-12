@@ -26,10 +26,6 @@ path / ProxyHandler {
 	port 80;
 }
 
-path /markdown MarkdownHandler {
-  root example_dir; 
-} 
-
 # Default response handler if no handlers match.
 default NotFoundHandler {}
 
