@@ -317,7 +317,7 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
 
   std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>";
 
-  body += "<form method=\"post\">Query:<br><input type=\"text\" name=\"query\"><br><input type=\"submit\" value=\"Submit\"></form>";
+  body += "<form action=\"/static1/seal1.jpg\" method=\"post\">Query:<br><input type=\"text\" name=\"query\"><br><input type=\"submit\" value=\"Submit\"></form>";
   
   // Check MySQL config values are set and make connection
   if (user_name_== "" || password_== "" || database_ == "" || host_ == "") {
@@ -356,12 +356,18 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
       pstmt = connection->prepareStatement("SELECT * FROM movies");
       res = pstmt->executeQuery();
       
-      body += "<table border=\"1\"><tr><th>Name</th></tr>";
+      body += "<table border=\"1\"><tr><th>Name</th><th>Year</th><th>Genre</th></tr>";
       while (res->next()) {
         std::cout << "\t... MySQL replies: ";
         /* Access column data by alias or column name */
         body += "<tr><td>";
         body += res->getString("Name");
+        body += "</td>";
+        body += "<td>";
+        body += res->getString("Year");
+        body += "</td>";
+        body += "<td>";
+        body += res->getString("Genre");
         body += "</td></tr>";
         std::cout << res->getString("Name") << std::endl;
         std::cout << "\t... MySQL says it again: ";
