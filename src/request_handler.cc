@@ -362,10 +362,11 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
       body += "<table border=\"1\"><tr><th>Name</th><th>Year</th><th>Genre</th></tr>";
       while (res->next()) {
         /* Access column data by alias or column name */
-        // for now, shows all the rows with that name
-        if(res->getString("Name") == query) {
+        // for now, shows all the rows that contain that name
+        // excludes empty string
+        if(res->getString("Name").find(query) != std::string::npos && !query.empty()) {
           body += "<tr><td>";
-          body += query;
+          body += res->getString("Name");
           body += "</td>";
           body += "<td>";
           body += res->getString("Year");
