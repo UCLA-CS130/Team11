@@ -289,11 +289,19 @@ RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, cons
     std::string value = token_list[1];
 
     if (token == "user") {
-      user_name_ = ""; // user name for database
+      user_name_ = value;
+    }
+
+    if (token == "host") {
+      host_ = value;
     }
 
     if (token == "password"){
-      password_ = "";
+      password_ = value;
+    }
+
+    if (token == "database") {
+      database_ = value;
     }
   }
 
@@ -306,17 +314,14 @@ RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, cons
 RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Response* response)
 {
   // TODO: finish implementation with online database
-  // source: https://dev.mysql.com/doc/connector-cpp/en/connector-cpp-examples-complete-example-2.html
-  // USE THIS REFERENCE FOR HANDLING PERMISSIONS: 
-  // http://stackoverflow.com/questions/6445917/connect-failed-access-denied-for-user-rootlocalhost-using-password-yes
   
-  sql::Statement *stmt;
-  sql::PreparedStatement *pstmt;
-  sql::ResultSet *res;
+  // Check MySQL config values are set and make connection
+  if (user_name_== "" || password_== "" || database_ == "" || host_ == "") {
+    BOOST_LOG_TRIVIAL(warning) << "Database config missing required values.";
+    return INVALID_CONFIG;
+  }
 
-  sql::Connection *connection = driver_->connect("localhost", user_name_, password_);
-  /* Connect to the MySQL test database */
-  connection->setSchema("test");
+  sql::Connection *connection = driver_->connect(host_, user_name_, password_);
 
   if(!connection) {
     BOOST_LOG_TRIVIAL(warning) << "Failed connection";
@@ -326,32 +331,29 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
     BOOST_LOG_TRIVIAL(info) << "Connection successful.";
   }
 
-  stmt = connection->createStatement();
-  stmt->execute("DROP TABLE IF EXISTS test");
-  stmt->execute("CREATE TABLE test(id INT)");
-  delete stmt;
+  // Connect to our database
+  connection->setSchema(database_);
+  
+  // Grab content from existing movies table
+  sql::PreparedStatement *pstmt;
+  sql::ResultSet *res;
 
-  /* '?' is the supported placeholder syntax */
-  pstmt = connection->prepareStatement("INSERT INTO test(id) VALUES (?)");
-  for (int i = 1; i <= 10; i++) {
-    pstmt->setInt(1, i);
-    pstmt->executeUpdate();
-  }
-  delete pstmt;
-
-  /* Select in ascending order */
-  pstmt = connection->prepareStatement("SELECT id FROM test ORDER BY id ASC");
+  pstmt = connection->prepareStatement("SELECT * FROM movies");
   res = pstmt->executeQuery();
-
-  /* Fetch in reverse = descending order! */
-  res->afterLast();
-
-  while (res->previous()){
-    std::cout << "\t... MySQL counts: " << res->getInt("id") << std::endl;
+  
+  while (res->next()) {
+    std::cout << "\t... MySQL replies: ";
+    /* Access column data by alias or column name */
+    std::cout << res->getString("Name") << std::endl;
+    std::cout << "\t... MySQL says it again: ";
+    /* Access column data by numeric offset, 1 is the first column */
+    std::cout << res->getString(1) << std::endl;
   }
+
+  delete pstmt;
   delete res;
 
-  delete pstmt;
+  // Close connection
   connection->close();
 
   delete connection;

@@ -27,8 +27,10 @@ path / ProxyHandler {
 } 
 
 path /database DatabaseHandler {
-	user foo;
-	password foobar;
+  host sql3.freemysqlhosting.net;
+  database sql3163392;
+	user sql3163392;
+	password AUUbMMmaw8;
 }
 
 # Default response handler if no handlers match.

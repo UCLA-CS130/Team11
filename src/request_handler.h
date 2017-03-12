@@ -35,7 +35,8 @@ public:
     INVALID_PATH = 2,
     INVALID_RESPONSE = 3,
     FILE_NOT_FOUND = 4,
-    DATABASE_ERROR = 5
+    DATABASE_ERROR = 5,
+    INVALID_CONFIG = 6
     // Define your status codes here.
   };
 
@@ -132,8 +133,10 @@ class DatabaseHandler : public RequestHandler {
     virtual Status HandleRequest(const Request& request, Response* response);
     virtual std::string GetName();
   private:
-    std::string user_name_;
-    std::string password_;
+    std::string user_name_ = "";
+    std::string password_ = "";
+    std::string host_ = "";
+    std::string database_ = "";
     sql::mysql::MySQL_Driver *driver_;
 
 };
