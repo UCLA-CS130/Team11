@@ -314,6 +314,10 @@ RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, cons
 RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Response* response)
 {
   // TODO: finish implementation with online database
+
+  std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>";
+
+  body += "<form method=\"post\">Query:<br><input type=\"text\" name=\"query\"><br><input type=\"submit\" value=\"Submit\"></form>";
   
   // Check MySQL config values are set and make connection
   if (user_name_== "" || password_== "" || database_ == "" || host_ == "") {
@@ -329,45 +333,102 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
   }
   else {
     BOOST_LOG_TRIVIAL(info) << "Connection successful.";
-  }
 
-  // Connect to our database
-  connection->setSchema(database_);
-  
-  // Grab content from existing movies table
-  sql::PreparedStatement *pstmt;
-  sql::ResultSet *res;
+    // Connect to our database
+    connection->setSchema(database_);
+    
+    // Grab content from existing movies table
+    sql::PreparedStatement *pstmt;
+    sql::ResultSet *res;
 
-  pstmt = connection->prepareStatement("SELECT * FROM movies");
-  res = pstmt->executeQuery();
-  
-  while (res->next()) {
-    std::cout << "\t... MySQL replies: ";
-    /* Access column data by alias or column name */
-    std::cout << res->getString("Name") << std::endl;
-    std::cout << "\t... MySQL says it again: ";
-    /* Access column data by numeric offset, 1 is the first column */
-    std::cout << res->getString(1) << std::endl;
-  }
+    if(request.method() == "GET") {
+      // URI = /database?query=select+*+from+movies
+      std::string uri = request.uri();
+      std::string param = "query=";
+      std::size_t query_start = uri_.find(param);
+      std::string query = "";
+      if(query_start != std::string::npos) {
+        query = URLDecode(uri_.substr(query_start + param.length()));
+      }
 
-  delete pstmt;
-  delete res;
+      BOOST_LOG_TRIVIAL(info) << "My query: " << query;
 
-  // Close connection
-  connection->close();
+      pstmt = connection->prepareStatement("SELECT * FROM movies");
+      res = pstmt->executeQuery();
+      
+      body += "<table border=\"1\"><tr><th>Name</th></tr>";
+      while (res->next()) {
+        std::cout << "\t... MySQL replies: ";
+        /* Access column data by alias or column name */
+        body += "<tr><td>";
+        body += res->getString("Name");
+        body += "</td></tr>";
+        std::cout << res->getString("Name") << std::endl;
+        std::cout << "\t... MySQL says it again: ";
+        /* Access column data by numeric offset, 1 is the first column */
+        std::cout << res->getString(1) << std::endl;
+      }
+      body += "</table>";
+    }
 
-  delete connection;
+    delete pstmt;
+    delete res;
 
-  std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>"; 
+    // Close connection
+    connection->close();
 
-  response->SetStatus(response->ResponseCode::OK);
-  response->ClearHeaders();
-  response->AddHeader("Content-Type", "text/html");
-  response->SetBody(body);
+    delete connection; 
 
-  return RequestHandler::Status::OK;
+    response->SetStatus(response->ResponseCode::OK);
+    response->ClearHeaders();
+    response->AddHeader("Content-Length",std::to_string(body.size()));
+    response->AddHeader("Content-Type", "text/html");
+    response->SetBody(body);
+
+    return RequestHandler::Status::OK;
+  } 
 }
 
 std::string DatabaseHandler::GetName(){
   return "DatabaseHandler";
+}
+
+// source: http://dlib.net/dlib/server/server_http.cpp.html
+
+const std::string DatabaseHandler::URLDecode(const std::string& str) {
+  using namespace std;
+  std::string result;
+  std::string::size_type i;
+  for (i = 0; i < str.size(); ++i)
+  {
+    if (str[i] == '+')
+    {
+        result += ' ';
+    }
+    else if (str[i] == '%' && str.size() > i+2)
+    {
+      const unsigned char ch1 = FromHex(str[i+1]);
+      const unsigned char ch2 = FromHex(str[i+2]);
+      const unsigned char ch = (ch1 << 4) | ch2;
+      result += ch;
+      i += 2;
+    }
+    else
+    {
+      result += str[i];
+    }
+  }
+  return result;
+}
+
+unsigned char DatabaseHandler::FromHex(unsigned char ch) {
+  if (ch <= '9' && ch >= '0')
+      ch -= '0';
+  else if (ch <= 'f' && ch >= 'a')
+      ch -= 'a' - 10;
+  else if (ch <= 'F' && ch >= 'A')
+      ch -= 'A' - 10;
+  else 
+      ch = 0;
+  return ch;
 }

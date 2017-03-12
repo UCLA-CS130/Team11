@@ -132,6 +132,8 @@ class DatabaseHandler : public RequestHandler {
     virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
     virtual Status HandleRequest(const Request& request, Response* response);
     virtual std::string GetName();
+    const std::string URLDecode(const std::string& str);
+    unsigned char FromHex(unsigned char ch);
   private:
     std::string user_name_ = "";
     std::string password_ = "";
