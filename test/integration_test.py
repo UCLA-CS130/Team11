@@ -78,7 +78,7 @@ User-Agent: curl/"""
 expected_response_second = """Host: localhost:9999\r
 Accept: */*\r\n\r\n"""
 
-echo_response = echo_request_process.stdout.read().decode('utf-8')
+echo_response = echo_request_process.stdout.read()
 
 print "Echo response:"
 print echo_response
