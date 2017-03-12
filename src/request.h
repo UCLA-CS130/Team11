@@ -15,7 +15,7 @@ class Request {
 public:
   Request(const std::string& raw_request)  
   : raw_request_(raw_request), method_(""), 
-  URI_(""), path_(""), file_(""), mime_type_(""), version_("")  { build_map(); }
+  URI_(""), path_(""), file_(""), mime_type_(""), version_(""), extension_("")  { build_map(); }
 
   std::unique_ptr<Request> Parse(const std::string& raw_request);
 
@@ -26,6 +26,7 @@ public:
   std::string path() const { return path_; }
   std::string file() const { return file_; }
   std::string mime_type() const { return mime_type_; }
+  std::string extension() const { return extension_;}
 
   using Headers = std::vector<std::pair<std::string, std::string>>;
   Headers headers() const { return headers_; }
@@ -48,6 +49,7 @@ private:
   std::string file_;
   std::string mime_type_;
   std::string version_;
+  std::string extension_;
 
 };
 

@@ -14,6 +14,7 @@
 #include "response.h"
 #include "config_parser.h"
 #include "request.h"
+#include "markdown.h"
 
 class RequestHandler {
 public:
@@ -22,7 +23,8 @@ public:
     MISSING_ROOT = 1,
     INVALID_PATH = 2,
     INVALID_RESPONSE = 3,
-    FILE_NOT_FOUND = 4
+    FILE_NOT_FOUND = 4, 
+  
     // Define your status codes here.
   };
 
@@ -112,5 +114,6 @@ class ProxyHandler : public RequestHandler {
 };
 
 REGISTER_REQUEST_HANDLER(ProxyHandler);
+
 
 #endif  // REQUEST_HANDLER_H

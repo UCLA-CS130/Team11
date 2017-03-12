@@ -92,6 +92,25 @@ RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Resp
       body.append(buffer, file_stream->gcount());
     }
 
+    // Handle markdown files
+    if (request.extension() == ".md") {
+      BOOST_LOG_TRIVIAL(debug) << "Handling markdown file";
+
+      markdown::Document doc;
+      std::stringstream ss;
+      std::string html_md;   
+      doc.read(body);
+
+      BOOST_LOG_TRIVIAL(debug) << "Markdown tokens: \n";
+      doc.writeTokens(std::cout); 
+      doc.write(ss);  
+      html_md = ss.str();
+
+      BOOST_LOG_TRIVIAL(debug) << "Markdown html: \n" << html_md; 
+      response->SetBody(html_md);
+      return OK; 
+    }
+
     response->SetBody(body); 
     //TODO: Potentially have some checks here? 
   }

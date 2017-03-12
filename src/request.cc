@@ -9,6 +9,7 @@ void Request::build_map() {
   mime_map_[".jpg"] = JPG;
   mime_map_[".jpeg"] = JPG;
   mime_map_[".png"] = PNG;
+  mime_map_[".md"] = HTML; 
 }
 
 std::string Request::extension_to_type(std::string ext) {
@@ -27,6 +28,7 @@ void Request::print_contents() {
   std::cout << "http version: " << this->version() << std::endl;
   std::cout << "path: " << this->path() << std::endl;
   std::cout << "file: " << this->file() << std::endl;
+  std::cout << "extension: " << this->extension() << std::endl;
   std::cout << "mime_type: " << this->mime_type() << std::endl;  
 } 
 
@@ -57,8 +59,8 @@ std::unique_ptr<Request> Request::Parse(const std::string& raw_request) {
   boost::filesystem::path p(parsed_request->URI_);
   parsed_request->path_ = p.parent_path().string(); 
   parsed_request->file_ = p.filename().string();
-  std::string ext = p.extension().string();
-  parsed_request->mime_type_ = extension_to_type(ext); 
+  parsed_request->extension_ = p.extension().string();
+  parsed_request->mime_type_ = extension_to_type(parsed_request->extension()); 
 
   // Handle headers and body
   for(unsigned int i = 1; i < lines.size(); i++){

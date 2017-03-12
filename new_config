@@ -24,7 +24,7 @@ path /echo/foo/bar EchoHandler {}
 path / ProxyHandler { 
 	host ucla.edu; 
 	port 80;
-} 
+}
 
 # Default response handler if no handlers match.
 default NotFoundHandler {}
