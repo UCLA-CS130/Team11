@@ -341,9 +341,6 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
     sql::PreparedStatement *pstmt;
     sql::ResultSet *res;
 
-    //response->SetStatus(Response::OK); 
-    //response->AddHeader(CONTENT_TYPE, request.mime_type());
-
     if(request.method() == "GET") {
       // URI = /database?query=select+*+from+movies
       original_uri_ = request.uri();
@@ -364,7 +361,6 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
       
       body += "<table border=\"1\"><tr><th>Name</th><th>Year</th><th>Genre</th></tr>";
       while (res->next()) {
-        std::cout << "\t... MySQL replies: ";
         /* Access column data by alias or column name */
         // for now, shows all the rows with that name
         if(res->getString("Name") == query) {
@@ -378,10 +374,6 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
           body += res->getString("Genre");
           body += "</td></tr>";
         }
-        std::cout << res->getString("Name") << std::endl;
-        std::cout << "\t... MySQL says it again: ";
-        /* Access column data by numeric offset, 1 is the first column */
-        std::cout << res->getString(1) << std::endl;
       }
       body += "</table>";
     }
