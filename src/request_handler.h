@@ -24,6 +24,7 @@
 #include <cppconn/metadata.h>
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
 
 
 class RequestHandler {
@@ -33,7 +34,8 @@ public:
     MISSING_ROOT = 1,
     INVALID_PATH = 2,
     INVALID_RESPONSE = 3,
-    FILE_NOT_FOUND = 4
+    FILE_NOT_FOUND = 4,
+    DATABASE_ERROR = 5
     // Define your status codes here.
   };
 

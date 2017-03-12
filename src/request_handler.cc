@@ -289,11 +289,11 @@ RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, cons
     std::string value = token_list[1];
 
     if (token == "user") {
-      user_name_ = value; // user name for database
+      user_name_ = ""; // user name for database
     }
 
     if (token == "password"){
-      password_ = value;
+      password_ = "";
     }
   }
 
@@ -305,7 +305,56 @@ RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, cons
 
 RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Response* response)
 {
-  //do something 
+  // TODO: finish implementation with online database
+  // source: https://dev.mysql.com/doc/connector-cpp/en/connector-cpp-examples-complete-example-2.html
+  // USE THIS REFERENCE FOR HANDLING PERMISSIONS: 
+  // http://stackoverflow.com/questions/6445917/connect-failed-access-denied-for-user-rootlocalhost-using-password-yes
+  
+  sql::Statement *stmt;
+  sql::PreparedStatement *pstmt;
+  sql::ResultSet *res;
+
+  sql::Connection *connection = driver_->connect("localhost", user_name_, password_);
+  /* Connect to the MySQL test database */
+  connection->setSchema("test");
+
+  if(!connection) {
+    BOOST_LOG_TRIVIAL(warning) << "Failed connection";
+    return RequestHandler::Status::DATABASE_ERROR; 
+  }
+  else {
+    BOOST_LOG_TRIVIAL(info) << "Connection successful.";
+  }
+
+  stmt = connection->createStatement();
+  stmt->execute("DROP TABLE IF EXISTS test");
+  stmt->execute("CREATE TABLE test(id INT)");
+  delete stmt;
+
+  /* '?' is the supported placeholder syntax */
+  pstmt = connection->prepareStatement("INSERT INTO test(id) VALUES (?)");
+  for (int i = 1; i <= 10; i++) {
+    pstmt->setInt(1, i);
+    pstmt->executeUpdate();
+  }
+  delete pstmt;
+
+  /* Select in ascending order */
+  pstmt = connection->prepareStatement("SELECT id FROM test ORDER BY id ASC");
+  res = pstmt->executeQuery();
+
+  /* Fetch in reverse = descending order! */
+  res->afterLast();
+
+  while (res->previous()){
+    std::cout << "\t... MySQL counts: " << res->getInt("id") << std::endl;
+  }
+  delete res;
+
+  delete pstmt;
+  connection->close();
+
+  delete connection;
 
   std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>"; 
 
