@@ -26,6 +26,7 @@ public:
   std::string path() const { return path_; }
   std::string file() const { return file_; }
   std::string mime_type() const { return mime_type_; }
+  std::string update_uri(std::string new_uri);
 
   using Headers = std::vector<std::pair<std::string, std::string>>;
   Headers headers() const { return headers_; }

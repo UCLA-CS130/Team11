@@ -140,6 +140,7 @@ class DatabaseHandler : public RequestHandler {
     std::string host_ = "";
     std::string database_ = "";
     sql::mysql::MySQL_Driver *driver_;
+    std::string original_uri_ = "";
 
 };
 

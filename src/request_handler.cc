@@ -341,14 +341,20 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
     sql::PreparedStatement *pstmt;
     sql::ResultSet *res;
 
+    //response->SetStatus(Response::OK); 
+    //response->AddHeader(CONTENT_TYPE, request.mime_type());
+
     if(request.method() == "GET") {
       // URI = /database?query=select+*+from+movies
+      original_uri_ = request.uri();
       std::string uri = request.uri();
-      std::string param = "query=";
-      std::size_t query_start = uri_.find(param);
+      std::cout << "Request URI is: " << uri << std::endl;
+      std::string param = "database/";
+      std::size_t query_start = uri.find(param);
+      std::cout << "Query start: " << query_start << std::endl;
       std::string query = "";
       if(query_start != std::string::npos) {
-        query = URLDecode(uri_.substr(query_start + param.length()));
+        query = URLDecode(uri.substr(query_start + param.length()));
       }
 
       BOOST_LOG_TRIVIAL(info) << "My query: " << query;
@@ -360,15 +366,18 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
       while (res->next()) {
         std::cout << "\t... MySQL replies: ";
         /* Access column data by alias or column name */
-        body += "<tr><td>";
-        body += res->getString("Name");
-        body += "</td>";
-        body += "<td>";
-        body += res->getString("Year");
-        body += "</td>";
-        body += "<td>";
-        body += res->getString("Genre");
-        body += "</td></tr>";
+        // for now, shows all the rows with that name
+        if(res->getString("Name") == query) {
+          body += "<tr><td>";
+          body += query;
+          body += "</td>";
+          body += "<td>";
+          body += res->getString("Year");
+          body += "</td>";
+          body += "<td>";
+          body += res->getString("Genre");
+          body += "</td></tr>";
+        }
         std::cout << res->getString("Name") << std::endl;
         std::cout << "\t... MySQL says it again: ";
         /* Access column data by numeric offset, 1 is the first column */

@@ -19,6 +19,11 @@ std::string Request::extension_to_type(std::string ext) {
   return "text/plain";
 }
 
+std::string Request::update_uri(std::string new_uri) {
+  URI_ = new_uri;
+  return URI_;
+}
+
 void Request::print_contents() {
   std::cout << "Request contains:" << std::endl;
   std::cout << "request:\n" << this->raw_request() << std::endl;
