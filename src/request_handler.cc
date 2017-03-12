@@ -37,6 +37,14 @@ std::string EchoHandler::GetName() {
 /** STATIC FILE HANDLER */
 RequestHandler::Status StaticHandler::Init(const std::string& uri_prefix, const NginxConfig& config) {
   uri_ = uri_prefix; 
+  root_ = "";
+  timeout_ = -1;
+  username_ = "";
+  password_ = "";
+  orig_request_ = "";
+  orig_uri_ = "";
+  cookie = {0, -1};
+
   for (unsigned int i = 0; i < config.statements_.size(); i++) {
     std::vector<std::string> token_list = config.statements_[i]->tokens_; 
     if (token_list.size() < 2) {
@@ -51,15 +59,25 @@ RequestHandler::Status StaticHandler::Init(const std::string& uri_prefix, const 
       boost::filesystem::path p(value);
       if (boost::filesystem::exists(p) && boost::filesystem::is_directory(p)) {
         root_ = value;
-        return OK; 
+        //return OK; 
       }
       else {
         BOOST_LOG_TRIVIAL(warning) << value << " is an invalid path or not a directory."; 
         return INVALID_PATH; 
       }
     }
+    else if (token == USER) {
+      username_ = value;
+    }
+    else if (token == PASS) {
+      password_ = value;
+    }
   }
-  return MISSING_ROOT;
+  if(root_.empty()) {
+    BOOST_LOG_TRIVIAL(warning) << "No root path specified";
+    return MISSING_ROOT;
+  }
+  return OK;
 }
 
 RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Response* response) {
@@ -67,21 +85,92 @@ RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Resp
     return INVALID_RESPONSE;
   }
 
+  std::string login = "/private/login.html";
+  std::string contents = "";
+
+  bool redirect = false;
+
+  // if the raw request contains login.html
+  if(request.raw_request().find(login) != std::string::npos) {
+    redirect = true;
+  }
+
   response->SetStatus(Response::OK); 
-  response->AddHeader(CONTENT_TYPE, request.mime_type());
+  //response->AddHeader(CONTENT_TYPE, request.mime_type());
 
   std::string file_path = root_ + "/" + request.file(); 
 
+  if(!username_.empty() && !redirect) {
+    time_t seconds;
+    seconds = time(NULL);
+    if(cookie.key == 0 || ((seconds - cookie.time) > timeout_)) {
+      //response->SetStatus(Response::OK); 
+      response->AddHeader("Location", "/private/login.html");
+      response->AddHeader(CONTENT_TYPE, "text/html");
+      response->AddHeader("Content-Length", "228");
+      
+      boost::filesystem::path p("private_dir/login.html");
+      // Verify if file exists:
+      if (boost::filesystem::exists(p) && !boost::filesystem::is_directory(p)) {
+        // Attempt to open file:
+        boost::filesystem::ifstream* file_stream = new boost::filesystem::ifstream(p);
+        if (file_stream == nullptr || !file_stream->is_open()) {
+          // TODO: For now it will be handled by 404, by this is better as a 500 Internal Service Error
+          BOOST_LOG_TRIVIAL(warning) << "The file at " << "private_dir/login.html" << "does not exist or is unabled to be opened"; 
+          return FILE_NOT_FOUND; 
+        }
+
+        // Attempt to read in file and write to body string
+        char buffer[512]; 
+        std::string body = "";
+        while(file_stream->read(buffer, sizeof(buffer)).gcount() > 0) {
+          body.append(buffer, file_stream->gcount());
+        }
+
+        orig_request_ = request.raw_request();
+        orig_uri_ = request.uri();
+
+        response->SetBody(body); 
+        //TODO: Potentially have some checks here? 
+      }
+      else {
+        return FILE_NOT_FOUND; 
+      }
+      return OK;
+    }
+  }
+
+  if(request.method() == "POST") {
+    // TODO: make this not hardcoded
+    if("Team11" == username_ && "nice" == password_) {
+      unsigned long random_num = rand() % 1000000;
+      cookie.key = random_num;
+      time_t seconds;
+      seconds = time(NULL);
+      cookie.time = seconds;
+
+      response->AddHeader("Location", orig_uri_);
+      Request req("");
+      std::unique_ptr<Request> new_request = req.Parse(orig_request_);
+      orig_request_ = "";
+      orig_uri_ = "";
+
+      // should give us the new file now that we have permissions
+      return HandleRequest(*new_request, response);
+    }
+  }
+
+  response->AddHeader(CONTENT_TYPE, request.mime_type());
+
   BOOST_LOG_TRIVIAL(debug) << "File path to be opened: " << file_path << std::endl;
 
-  // Verify if file exists:
   boost::filesystem::path p(file_path);
   if (boost::filesystem::exists(p) && !boost::filesystem::is_directory(p)) {
     // Attempt to open file:
     boost::filesystem::ifstream* file_stream = new boost::filesystem::ifstream(p);
     if (file_stream == nullptr || !file_stream->is_open()) {
       // TODO: For now it will be handled by 404, by this is better as a 500 Internal Service Error
-      BOOST_LOG_TRIVIAL(warning) << "The file at " << file_path << "does not exist or is unabled to be opened"; 
+      BOOST_LOG_TRIVIAL(warning) << "The file at " << "private_docs/login.html" << "does not exist or is unabled to be opened"; 
       return FILE_NOT_FOUND; 
     }
 
@@ -92,13 +181,15 @@ RequestHandler::Status StaticHandler::HandleRequest(const Request& request, Resp
       body.append(buffer, file_stream->gcount());
     }
 
+    orig_request_ = request.raw_request();
+    orig_uri_ = request.uri();
+
     response->SetBody(body); 
     //TODO: Potentially have some checks here? 
   }
   else {
     return FILE_NOT_FOUND; 
   }
-
   return OK; 
 }
 

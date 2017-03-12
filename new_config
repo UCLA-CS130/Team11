@@ -11,6 +11,12 @@ path /static2 StaticHandler {
 	root example_dir_2; 
 }
 
+path /private StaticHandler {
+	root private_dir;
+	user Team11;
+	pass nice;
+}
+
 # Multiple echo handlers to demonstrate longest prefix matching: 
 # If a request is made to /echo/test => /echo EchoHandler is still called
 path /echo EchoHandler {}

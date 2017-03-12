@@ -10,10 +10,17 @@
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <iostream>
+#include <time.h>
 
 #include "response.h"
 #include "config_parser.h"
 #include "request.h"
+
+struct Cookie {
+  unsigned long key;
+  time_t time;
+};
+
 
 class RequestHandler {
 public:
@@ -80,6 +87,13 @@ class StaticHandler : public RequestHandler {
   virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
   virtual Status HandleRequest(const Request& request, Response* response);
   virtual std::string GetName();
+ private:
+  std::string username_;
+  time_t timeout_;
+  std::string password_;
+  std::string orig_request_;
+  std::string orig_uri_;
+  Cookie cookie;
 };
 
 REGISTER_REQUEST_HANDLER(StaticHandler);
