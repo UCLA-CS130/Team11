@@ -271,7 +271,7 @@ std::string ProxyHandler::GetName(){
   return "ProxyHandler";
 }
 
-
+/* DATABASE HANDLER */
 
 RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, const NginxConfig& config)
 {
@@ -313,11 +313,10 @@ RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, cons
 
 RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Response* response)
 {
-  // TODO: finish implementation with online database
 
   std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>";
 
-  body += "<form method=\"post\">Query:<br><input type=\"text\" name=\"query\"><br><input type=\"submit\" value=\"Submit\"></form>";
+  //body += "<form method=\"post\">Query:<br><input type=\"text\" name=\"query\"><br><input type=\"submit\" value=\"Submit\"></form>";
   
   // Check MySQL config values are set and make connection
   if (user_name_== "" || password_== "" || database_ == "" || host_ == "") {
