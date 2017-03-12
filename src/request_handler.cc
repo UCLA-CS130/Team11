@@ -362,8 +362,7 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
       while (res->next()) {
         /* Access column data by alias or column name */
         // for now, shows all the rows that contain that name
-        // excludes empty string
-        if(res->getString("Name").find(query) != std::string::npos && !query.empty()) {
+        if(res->getString("Name").find(query) != std::string::npos) {
           body += "<tr><td>";
           body += res->getString("Name");
           body += "</td>";
