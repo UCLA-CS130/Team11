@@ -335,8 +335,6 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
 {
 
   std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>";
-
-  //body += "<form method=\"post\">Query:<br><input type=\"text\" name=\"query\"><br><input type=\"submit\" value=\"Submit\"></form>";
   
   // Check MySQL config values are set and make connection
   if (user_name_== "" || password_== "" || database_ == "" || host_ == "") {
@@ -361,7 +359,6 @@ RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Re
     sql::ResultSet *res;
 
     if(request.method() == "GET") {
-      // URI = /database?query=select+*+from+movies
       original_uri_ = request.uri();
       std::string uri = request.uri();
       std::cout << "Request URI is: " << uri << std::endl;
