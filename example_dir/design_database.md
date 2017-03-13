@@ -1,6 +1,6 @@
 ##Database Interface##
 
-We implemented a simple database interface by defining a new ***Database Handler.***
+We implemented a simple database interface by defining a new **Database Handler.**
 
 By using the free mysql hosting site sql3.freemysqlhosting.net, we have our databases online.
 The config specifies the username and password for us to connect to our database.
