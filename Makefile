@@ -32,19 +32,19 @@ gtest_setup:
 config_parser_test: $(TEST_DIR)/config_parser_test.cc $(SRC_DIR)/config_parser.cc
 	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o config_parser_test
 
-request_handler_test: $(TEST_DIR)/request_handler_test.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc  $(SRC_DIR)/server.cc  $(SRC_DIR)/config_parser.cc  $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc
+request_handler_test: $(TEST_DIR)/request_handler_test.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/request.cc $(SRC_DIR)/response.cc  $(SRC_DIR)/server.cc  $(SRC_DIR)/config_parser.cc  $(SRC_DIR)/server_config.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/markdown.cc $(SRC_DIR)/markdown-tokens.cc
 	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o request_handler_test
 
-request_test: $(TEST_DIR)/request_test.cc $(SRC_DIR)/request.cc
+request_test: $(TEST_DIR)/request_test.cc $(SRC_DIR)/request.cc $(SRC_DIR)/markdown.cc $(SRC_DIR)/markdown-tokens.cc
 	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o request_test
 
-response_test: $(TEST_DIR)/response_test.cc $(SRC_DIR)/response.cc
+response_test: $(TEST_DIR)/response_test.cc $(SRC_DIR)/response.cc $(SRC_DIR)/markdown.cc $(SRC_DIR)/markdown-tokens.cc
 	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o response_test
 
-server_config_test: $(TEST_DIR)/server_config_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc
+server_config_test: $(TEST_DIR)/server_config_test.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/status_count.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc $(SRC_DIR)/markdown.cc $(SRC_DIR)/markdown-tokens.cc
 	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o server_config_test	
 
-status_count_test: $(TEST_DIR)/status_count_test.cc $(SRC_DIR)/status_count.cc  $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/config_parser.cc
+status_count_test: $(TEST_DIR)/status_count_test.cc $(SRC_DIR)/status_count.cc  $(SRC_DIR)/config_parser.cc $(SRC_DIR)/request_handler.cc $(SRC_DIR)/response.cc $(SRC_DIR)/server_config.cc $(SRC_DIR)/config_parser.cc $(SRC_DIR)/markdown.cc $(SRC_DIR)/markdown-tokens.cc
 	$(CC) $(TFLAGS) $(TARGS) $^ ${GTEST_DIR}/src/gtest_main.cc $(TLINK) -o status_count_test	
 
 test: gtest_setup config_parser_test request_handler_test request_test response_test server_config_test status_count_test

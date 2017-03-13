@@ -14,6 +14,7 @@
 #include "response.h"
 #include "config_parser.h"
 #include "request.h"
+#include "markdown.h"
 
 #include "mysql_connection.h"
 #include "mysql_driver.h"
@@ -37,6 +38,7 @@ public:
     FILE_NOT_FOUND = 4,
     DATABASE_ERROR = 5,
     INVALID_CONFIG = 6
+
     // Define your status codes here.
   };
 

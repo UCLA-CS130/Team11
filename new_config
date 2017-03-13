@@ -24,7 +24,7 @@ path /echo/foo/bar EchoHandler {}
 path / ProxyHandler { 
 	host ucla.edu; 
 	port 80;
-} 
+}
 
 path /database DatabaseHandler {
   host sql3.freemysqlhosting.net;
