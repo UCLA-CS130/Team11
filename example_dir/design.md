@@ -5,7 +5,7 @@
 ## Demo
 
 This file! This file was written in markdown and is being served as an HTML file.
-An additional demo file can be found [here](localhost:8011/static1/markdown.md)
+An additional demo file can be found [here](http://localhost:8011/static1/markdown.md)
 
 ### Implementation 
 
@@ -18,19 +18,19 @@ An additional demo file can be found [here](localhost:8011/static1/markdown.md)
 
 We have a main table "movies" that can be queried by name in the following way:
 
-[localhost:8011/database](localhost:8011/database)
+[http://localhost:8011/database](localhost:8011/database)
 
 Displays a full table of all the movies in our database.
 
-[localhost:8011/database/Logan](localhost:8011/database/Logan)
+[http://localhost:8011/database/Logan](localhost:8011/database/Logan)
 
 Displays year and genre information on the movie Logan.
 
-[localhost:8011/database/Lego](localhost:8011/database/Lego)
+[http://localhost:8011/database/Lego](localhost:8011/database/Lego)
 
 Although the entire name is not specified, still displays year and genre information on the movie The Lego Batman Movie.
 
-[localhost:8011/database/B](localhost:8011/database/B)
+[http://localhost:8011/database/B](localhost:8011/database/B)
 
 Displays information on all movies containing a "B".
 
