@@ -71,6 +71,7 @@ void processConnection(tcp::socket socket, ServerConfig *server_config_) {
 
   if (parsed_request == nullptr) {
     BOOST_LOG_TRIVIAL(warning) << "Malformed request. Ignoring request";
+    return; 
   }
 
   BOOST_LOG_TRIVIAL(info) << "Received the following request:";
