@@ -2,6 +2,7 @@
 #include "http_constants.h"
 #include "status_count.h"
 
+
 #include <sstream>
 
 std::map<std::string, RequestHandler* (*)(void)>* request_handler_builders = nullptr;
@@ -288,3 +289,170 @@ RequestHandler::Status ProxyHandler::HandleRequest(const Request& request, Respo
 std::string ProxyHandler::GetName(){
   return "ProxyHandler";
 }
+
+
+/* DATABASE HANDLER */
+
+RequestHandler::Status DatabaseHandler::Init(const std::string& uri_prefix, const NginxConfig& config)
+{
+
+  uri_ = uri_prefix;
+
+  for (unsigned int i = 0; i < config.statements_.size(); i++) {
+    std::vector<std::string> token_list = config.statements_[i]->tokens_; 
+    if (token_list.size() < 2) {
+      BOOST_LOG_TRIVIAL(warning) << token_list[0] << " missing value. Ignoring statement"; 
+      continue;
+    }
+
+    std::string token = token_list[0]; 
+    std::string value = token_list[1];
+
+    if (token == "user") {
+      user_name_ = value;
+    }
+
+    if (token == "host") {
+      host_ = value;
+    }
+
+    if (token == "password"){
+      password_ = value;
+    }
+
+    if (token == "database") {
+      database_ = value;
+    }
+  }
+
+  //Initialize the database connection
+  driver_ = sql::mysql::get_mysql_driver_instance();
+
+  return OK; 
+}
+
+RequestHandler::Status DatabaseHandler::HandleRequest(const Request& request, Response* response)
+{
+
+  std::string body = "<html><body><h1>Welcome to Our Movie Database!</h1></body></html>";
+  
+  // Check MySQL config values are set and make connection
+  if (user_name_== "" || password_== "" || database_ == "" || host_ == "") {
+    BOOST_LOG_TRIVIAL(warning) << "Database config missing required values.";
+    return INVALID_CONFIG;
+  }
+
+  sql::Connection *connection = driver_->connect(host_, user_name_, password_);
+
+  if(!connection) {
+    BOOST_LOG_TRIVIAL(warning) << "Failed connection";
+    return RequestHandler::Status::DATABASE_ERROR; 
+  }
+  else {
+    BOOST_LOG_TRIVIAL(info) << "Connection successful.";
+
+    // Connect to our database
+    connection->setSchema(database_);
+    
+    // Grab content from existing movies table
+    sql::PreparedStatement *pstmt;
+    sql::ResultSet *res;
+
+    if(request.method() == "GET") {
+      original_uri_ = request.uri();
+      std::string uri = request.uri();
+      std::cout << "Request URI is: " << uri << std::endl;
+      std::string param = "database/";
+      std::size_t query_start = uri.find(param);
+      std::cout << "Query start: " << query_start << std::endl;
+      std::string query = "";
+      if(query_start != std::string::npos) {
+        query = URLDecode(uri.substr(query_start + param.length()));
+      }
+
+      BOOST_LOG_TRIVIAL(info) << "My query: " << query;
+
+      pstmt = connection->prepareStatement("SELECT * FROM movies");
+      res = pstmt->executeQuery();
+      
+      body += "<table border=\"1\"><tr><th>Name</th><th>Year</th><th>Genre</th></tr>";
+      while (res->next()) {
+        /* Access column data by alias or column name */
+        // for now, shows all the rows that contain that name
+        if(res->getString("Name").find(query) != std::string::npos) {
+          body += "<tr><td>";
+          body += res->getString("Name");
+          body += "</td>";
+          body += "<td>";
+          body += res->getString("Year");
+          body += "</td>";
+          body += "<td>";
+          body += res->getString("Genre");
+          body += "</td></tr>";
+        }
+      }
+      body += "</table>";
+    }
+
+    delete pstmt;
+    delete res;
+
+    // Close connection
+    connection->close();
+
+    delete connection; 
+
+    response->SetStatus(response->ResponseCode::OK);
+    response->ClearHeaders();
+    response->AddHeader("Content-Length",std::to_string(body.size()));
+    response->AddHeader("Content-Type", "text/html");
+    response->SetBody(body);
+
+    return RequestHandler::Status::OK;
+  } 
+}
+
+std::string DatabaseHandler::GetName(){
+  return "DatabaseHandler";
+}
+
+// source: http://dlib.net/dlib/server/server_http.cpp.html
+
+const std::string DatabaseHandler::URLDecode(const std::string& str) {
+  using namespace std;
+  std::string result;
+  std::string::size_type i;
+  for (i = 0; i < str.size(); ++i)
+  {
+    if (str[i] == '+')
+    {
+        result += ' ';
+    }
+    else if (str[i] == '%' && str.size() > i+2)
+    {
+      const unsigned char ch1 = FromHex(str[i+1]);
+      const unsigned char ch2 = FromHex(str[i+2]);
+      const unsigned char ch = (ch1 << 4) | ch2;
+      result += ch;
+      i += 2;
+    }
+    else
+    {
+      result += str[i];
+    }
+  }
+  return result;
+}
+
+unsigned char DatabaseHandler::FromHex(unsigned char ch) {
+  if (ch <= '9' && ch >= '0')
+      ch -= '0';
+  else if (ch <= 'f' && ch >= 'a')
+      ch -= 'a' - 10;
+  else if (ch <= 'F' && ch >= 'A')
+      ch -= 'A' - 10;
+  else 
+      ch = 0;
+  return ch;
+}
+

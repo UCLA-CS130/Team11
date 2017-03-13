@@ -16,6 +16,18 @@
 #include "request.h"
 #include "markdown.h"
 
+#include "mysql_connection.h"
+#include "mysql_driver.h"
+
+
+#include <cppconn/driver.h>
+#include <cppconn/exception.h>
+#include <cppconn/metadata.h>
+#include <cppconn/resultset.h>
+#include <cppconn/statement.h>
+#include <cppconn/prepared_statement.h>
+
+
 class RequestHandler {
 public:
   enum Status {
@@ -23,8 +35,10 @@ public:
     MISSING_ROOT = 1,
     INVALID_PATH = 2,
     INVALID_RESPONSE = 3,
-    FILE_NOT_FOUND = 4, 
-  
+    FILE_NOT_FOUND = 4,
+    DATABASE_ERROR = 5,
+    INVALID_CONFIG = 6
+
     // Define your status codes here.
   };
 
@@ -114,6 +128,25 @@ class ProxyHandler : public RequestHandler {
 };
 
 REGISTER_REQUEST_HANDLER(ProxyHandler);
+
+class DatabaseHandler : public RequestHandler {
+  public:
+    virtual Status Init(const std::string& uri_prefix, const NginxConfig& config);
+    virtual Status HandleRequest(const Request& request, Response* response);
+    virtual std::string GetName();
+    const std::string URLDecode(const std::string& str);
+    unsigned char FromHex(unsigned char ch);
+  private:
+    std::string user_name_ = "";
+    std::string password_ = "";
+    std::string host_ = "";
+    std::string database_ = "";
+    sql::mysql::MySQL_Driver *driver_;
+    std::string original_uri_ = "";
+
+};
+
+REGISTER_REQUEST_HANDLER(DatabaseHandler);
 
 
 #endif  // REQUEST_HANDLER_H

@@ -1,6 +1,6 @@
  # This is a comment.
 
-port 9999;  # This is also a comment.
+port 8011;  # This is also a comment.
 num_threads 5;
 
 path /static1 StaticHandler {
@@ -24,6 +24,13 @@ path /echo/foo/bar EchoHandler {}
 path / ProxyHandler { 
 	host ucla.edu; 
 	port 80;
+}
+
+path /database DatabaseHandler {
+  host sql3.freemysqlhosting.net;
+  database sql3163392;
+	user sql3163392;
+	password AUUbMMmaw8;
 }
 
 # Default response handler if no handlers match.

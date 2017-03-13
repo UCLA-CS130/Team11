@@ -11,7 +11,7 @@ server = subprocess.Popen(['../serve', '../new_config'])
 time.sleep(0.03)
 
 # make two request to the , one to the proxy server, one to the ucla.edu
-curl_proc = subprocess.call(["curl", "-s", "localhost:9999", "-o", "out1"])
+curl_proc = subprocess.call(["curl", "-s", "localhost:8011", "-o", "out1"])
 curl_proc = subprocess.call(["curl", "-s", "ucla.edu", "-o", "out2"])
 
 

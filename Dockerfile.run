@@ -3,7 +3,7 @@ FROM busybox:ubuntu-14.04
 WORKDIR /opt/web-serve
 COPY . /opt/web-serve
 
-EXPOSE 9999:9999
+EXPOSE 8011:8011
 
-CMD ["./serve", "new_config"]
+# CMD ["./serve", "new_config"]
 

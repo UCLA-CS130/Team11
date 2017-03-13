@@ -5,10 +5,10 @@ SRC_DIR=src
 
 CC =g++
 CFLAGS =-g -Wall -std=c++11 
-LIBFLAGS =-static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_filesystem -lboost_thread -lboost_regex
+LIBFLAGS = -lmysqlcppconn-static -lmysqlclient -ldl -lz -lc -static-libgcc -static-libstdc++ -pthread -Wl,-Bstatic -lboost_system -lboost_log_setup -lboost_log -lboost_filesystem -lboost_regex -lboost_thread
 TFLAGS =-std=c++11 -isystem ${GTEST_DIR}/include -isystem ${GMOCK_DIR}/include -DBOOST_LOG_DYN_LINK
 TARGS =-pthread
-TLINK =-L./ -lgmock -lgtest -lboost_system -lboost_log -lboost_filesystem -lboost_regex -lpthread
+TLINK =-L./ -lmysqlcppconn -lmysqlclient -ldl -lz -lc -lgmock -lgtest -lboost_system -lboost_log -lboost_filesystem -lboost_regex -lpthread
 TARGET=serve
 
 CCFILE = src/*.cc
@@ -55,7 +55,7 @@ test: gtest_setup config_parser_test request_handler_test request_test response_
 	./server_config_test
 	./status_count_test
 	python $(TEST_DIR)/integration_test.py
-	python $(TEST_DIR)/multithreading_test.py 4
+	
 
 # Create the initial build file 
 docker: Dockerfile
@@ -74,10 +74,10 @@ deploy: serve.tar Dockerfile.run
 	docker build -f Dockerfile.run -t serve.deploy .
 	chmod 400 team11-ec2-key-pair.pem
 	docker save serve.deploy | bzip2 | ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com 'bunzip2 | docker load'
-	ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com -t 'docker stop $$(docker ps -a -q); docker run -d -t -p 80:9999 serve.deploy;'
+	ssh -i "team11-ec2-key-pair.pem" ec2-user@ec2-52-26-164-101.us-west-2.compute.amazonaws.com -t 'docker stop $$(docker ps -a -q); docker run -d -t -p 80:8011 serve.deploy;'
 
 clean:
-	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/ serve.tar
+	rm -rf $(TARGET) config_parser_test request_handler_test request_test response_test server_config_test status_count_test libgmock.a libgtest.a deploy/ serve.tar serve.dSYM
 
 .PHONY: clean test deploy
 

@@ -3,7 +3,7 @@
 
 TEST(RequestTest, ParseRequestTest)
 {
-	const std::string r_request = "GET /echo HTTP/1.1\r\nHost: localhost:9999\r\nUser-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: en-gb,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive";
+	const std::string r_request = "GET /echo HTTP/1.1\r\nHost: localhost:8011\r\nUser-Agent: Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nAccept-Language: en-gb,en;q=0.5\r\nAccept-Encoding: gzip, deflate\r\nConnection: keep-alive";
 
 	Request req(r_request);
 
