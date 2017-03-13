@@ -7,6 +7,8 @@ RUN apt-get install -y software-properties-common
 RUN apt-get install -y libboost-all-dev
 RUN apt-get install -y make
 RUN apt-get install -y g++
+RUN apt-get install -y libmysqlclient-dev libmysqlcppconn-dev
+
 
 WORKDIR /opt/web-serve
 COPY . /opt/web-serve

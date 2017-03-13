@@ -8,7 +8,7 @@
 TEST(ServerConfigTest, GetPortNumber) {
   ServerConfig s;
   EXPECT_TRUE(s.parse_config("new_config"));
-  EXPECT_TRUE(s.get_port() == 9999);
+  EXPECT_TRUE(s.get_port() == 8011);
 }
 
 TEST(ServerConfigTest, MissingPortNumber) {
