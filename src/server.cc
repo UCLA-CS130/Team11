@@ -62,7 +62,7 @@ void processConnection(tcp::socket socket, ServerConfig *server_config_) {
     BOOST_LOG_TRIVIAL(warning) << "Reached end of file";
   }
   else if (err) {
-    throw boost::system::system_error(err);
+    return;
   }
 
   std::string string_req(req_buffer);
